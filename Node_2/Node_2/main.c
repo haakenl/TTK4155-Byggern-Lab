@@ -12,8 +12,8 @@
 #include "uart_and_printf/printf_stdarg.h"
 #include "can/can_controller.h"
 #include "IO.h"
+#include "PWM.h"
 
-//#define PIO_WPMR_WPKEY (0x50494F << 8)
 
 CAN_MESSAGE test;
 
@@ -26,6 +26,7 @@ int main(void)
 	configure_uart();
 	can_init_def_tx_rx_mb(0x00290561);
 	IO_Init();
+	PWM_init();
 	
 	
 	printf("Welcome PuTTY's\n\r");
@@ -41,9 +42,7 @@ int main(void)
 	/* Replace with your application code */
     while (1) 
     {
-		
-		
-		
+		//set_servo_pos(255);
     }
 }
 

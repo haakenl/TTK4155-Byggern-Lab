@@ -14,6 +14,8 @@ IO.c
 
 main.c
 
+PWM.c
+
 uart_and_printf\printf_stdarg.c
 
 uart_and_printf\uart.c

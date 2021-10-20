@@ -11,10 +11,11 @@
 #include "can_interrupt.h"
 #include <stdio.h>
 #include "sam.h"
-#include "../uart_and_printf/printf_stdarg.h"
 #include "can_controller.h"
+#include "../uart_and_printf/printf_stdarg.h"
+#include "../PWM.h"
 
-#define DEBUG_INTERRUPT 1
+#define DEBUG_INTERRUPT 0
 
 /**
  * \brief CAN0 Interrupt handler for RX, TX and bus error interrupts
@@ -46,7 +47,12 @@ void CAN0_Handler( void )
 		{
 			printf("CAN0 message arrived in non-used mailbox\n\r");
 		}
-
+		
+		
+		if(message.id == 2){
+			set_servo_pos(message.data[1]);
+		}
+			
 		if(DEBUG_INTERRUPT)printf("message id: %d\n\r", message.id);
 		if(DEBUG_INTERRUPT)printf("message data length: %d\n\r", message.data_length);
 		for (int i = 0; i < message.data_length; i++)
@@ -55,6 +61,7 @@ void CAN0_Handler( void )
 		}
 		if(DEBUG_INTERRUPT)printf("\n\r");
 	}
+	
 	
 	if(can_sr & CAN_SR_MB0)
 	{

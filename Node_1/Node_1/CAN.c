@@ -123,7 +123,7 @@ can_message CAN_message_receive(void){
 	for (int i = 0; i < msg.data_length; i++) {
 		msg.data[i] = CAN_read(MCP_RXB1D0 + i);
 	}
-	// reset int rx1 flag
+	// reset int RX1 flag
 	CAN_bit_modify(MCP_CANINTF, MCP_RX1IF, 0);
 	return msg;
 }
