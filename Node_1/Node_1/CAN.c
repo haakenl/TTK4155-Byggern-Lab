@@ -5,10 +5,7 @@
  *  Author: haakenl
  */ 
 
-#include "config.h"
 #include "CAN.h"
-#include "SPI.h"
-#include "mcp2515.h"
 
 
 uint8_t CAN_read(uint8_t adr){
@@ -84,7 +81,7 @@ uint8_t CAN_init(void){
 		error_check = CAN_read(MCP_CANSTAT);
 		if((error_check & MODE_MASK) != MODE_NORMAL){
 			return 1;
-		}
+		}	
 	return 0;
 }
 

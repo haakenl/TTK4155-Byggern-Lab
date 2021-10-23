@@ -105,7 +105,7 @@ can/can_interrupt.d can/can_interrupt.o: ../can/can_interrupt.c \
  C:\Program\ Files\ (x86)\Atmel\Studio\7.0\Packs\atmel\SAM3X_DFP\1.0.50\include/instance/gpbr.h \
  C:\Program\ Files\ (x86)\Atmel\Studio\7.0\Packs\atmel\SAM3X_DFP\1.0.50\include/pio/sam3x8e.h \
  ../can/can_controller.h ../can/../uart_and_printf/printf_stdarg.h \
- ../can/../PWM.h
+ ../can/../PWM.h ../can/../IO.h
 
 ../can/can_interrupt.h:
 
@@ -322,3 +322,5 @@ C:\Program\ Files\ (x86)\Atmel\Studio\7.0\Packs\atmel\SAM3X_DFP\1.0.50\include/p
 ../can/../uart_and_printf/printf_stdarg.h:
 
 ../can/../PWM.h:
+
+../can/../IO.h:

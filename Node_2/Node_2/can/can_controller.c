@@ -14,6 +14,7 @@
 
 
 
+
 /**
  * \brief Initialize can bus with predefined number of rx and tx mailboxes, 
  * CAN0->CAN_MB[0] is used for transmitting

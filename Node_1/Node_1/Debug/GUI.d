@@ -19,7 +19,7 @@ GUI.d GUI.o: .././GUI.c .././GUI.h .././config.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\math.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\lib\gcc\avr\5.4.0\include\stdbool.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\string.h \
- .././OLED.h .././ADC.h .././CAN.h
+ .././OLED.h .././ADC.h .././CAN.h .././SPI.h .././mcp2515.h
 
 .././GUI.h:
 
@@ -70,3 +70,7 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\
 .././ADC.h:
 
 .././CAN.h:
+
+.././SPI.h:
+
+.././mcp2515.h:

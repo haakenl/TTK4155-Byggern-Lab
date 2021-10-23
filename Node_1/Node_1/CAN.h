@@ -6,9 +6,14 @@
  */ 
 
 
+
+
 #ifndef CAN_H_
 #define CAN_H_
 
+#include "config.h"
+#include "SPI.h"
+#include "mcp2515.h"
 
 typedef struct can_message{
 	uint16_t id;

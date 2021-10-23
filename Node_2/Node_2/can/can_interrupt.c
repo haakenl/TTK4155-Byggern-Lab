@@ -14,6 +14,7 @@
 #include "can_controller.h"
 #include "../uart_and_printf/printf_stdarg.h"
 #include "../PWM.h"
+#include "../IO.h"
 
 #define DEBUG_INTERRUPT 0
 
@@ -49,8 +50,17 @@ void CAN0_Handler( void )
 		}
 		
 		
-		if(message.id == 2){
+		if(message.id == 3){
 			set_servo_pos(message.data[1]);
+		}
+		
+		if(message.id == 2){
+			if(message.data[0] == 1){
+				activate_solenoid;		
+			}
+			if(message.data[0] == 0){
+				deactivate_solenoid;
+			}
 		}
 			
 		if(DEBUG_INTERRUPT)printf("message id: %d\n\r", message.id);

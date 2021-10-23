@@ -11,6 +11,7 @@
 
 #include "config.h"
 
+
 void OLED_write_command(char command);
 void OLED_write_data(char data);
 void OLED_init();

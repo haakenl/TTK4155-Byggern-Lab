@@ -19,6 +19,11 @@
 #define loop_until_bit_is_set(reg, bit) while(!test_bit(bit,reg))
 #define loop_until_bit_is_clear(reg, bit) while(test_bit(reg, bit))
 
+#define reg_buttons PORTB
+#define joy_button PINB1
+#define rigth_button PINB2
+#define left_button PINB3
+
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <stdio.h>

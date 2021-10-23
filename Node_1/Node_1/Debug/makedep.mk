@@ -8,6 +8,8 @@ CAN.c
 
 GUI.c
 
+IO.c
+
 main.c
 
 OLED.c

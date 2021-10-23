@@ -2,6 +2,8 @@
 # Automatically-generated file. Do not edit or delete the file
 ################################################################################
 
+Analog_IO.c
+
 can\can_controller.c
 
 can\can_interrupt.c

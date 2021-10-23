@@ -5,7 +5,7 @@
  *  Author: haakenl
  */ 
 
-#include "config.h"
+
 #include "SPI.h"
 
 void SPI_MasterInit(void){

@@ -29,8 +29,8 @@ int main(void)
 		printf("CAN init error\n");
 	}
 	
-	//clear_bit(DDRD, PIND2);
-	
+	set_bit(PORTB, PB1);	// Enable internal pull-up on PB1	
+
 	GUI_print_menu(current_menu);
 	GUI_print_arrow(0);
 	

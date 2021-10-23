@@ -9,6 +9,8 @@
 #ifndef SPI_H_
 #define SPI_H_
 
+#include "config.h"
+
 #define SPI_CAN_SS PINB4
 #define SPI_MOSI PINB5
 #define SPI_MISO PINB6

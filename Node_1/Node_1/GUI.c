@@ -75,13 +75,28 @@ void GUI_menu_action(int current_page){
 		_delay_ms(1000); // INSERT GAME PLAY HERE
 		
 		while(1){
-		ADC_pos adc_pos = ADC_read();
 		
-		ADC_to_node2.id = 2;
+		if(!(test_bit(PINB, PINB1))){
+			Button_to_node2.id = 2;
+			Button_to_node2.data_length = 1;
+			Button_to_node2.data[0] = 1;
+			CAN_message_send(&Button_to_node2);
+			_delay_ms(50);
+			while(!(test_bit(PINB, PINB1)));
+			Button_to_node2.id = 2;
+			Button_to_node2.data_length = 1;
+			Button_to_node2.data[0] = 0;
+			CAN_message_send(&Button_to_node2);
+		}
+		
+		
+		
+		ADC_pos adc_pos = ADC_read();
+				
+		ADC_to_node2.id = 3;
 		ADC_to_node2.data_length = 2;
-		ADC_to_node2.data[0] = adc_pos.slider_left;
-		ADC_to_node2.data[1] = adc_pos.slider_right; 
-					
+		ADC_to_node2.data[0] = adc_pos.joy_x ;
+		ADC_to_node2.data[1] = adc_pos.joy_y; 			
 		CAN_message_send(&ADC_to_node2);
 		_delay_ms(16);
 		}
