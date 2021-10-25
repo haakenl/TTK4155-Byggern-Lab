@@ -16,4 +16,6 @@ Node 2 (ATSAM3X8E) firmware contains:
 - CANbus driver (code provided by NTNU).
 - PWM driver.
 - PI-controller.
+
+
 please feel free to use and learn from our mistakes in this project.
