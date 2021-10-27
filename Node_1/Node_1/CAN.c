@@ -72,9 +72,13 @@ uint8_t CAN_init(void){
 		return 1;
 	}		
 	
-	CAN_write(MCP_CNF3, 0x01); 
-	CAN_write(MCP_CNF2, 0xb5); 
-	CAN_write(MCP_CNF1, 0x43);
+	//CAN_write(MCP_CNF3, 0x01); 
+	//CAN_write(MCP_CNF2, 0xb5);	
+	//CAN_write(MCP_CNF1, 0x43);	
+	
+	CAN_write(MCP_CNF3, 0x05);		//see can config sheet on github
+	CAN_write(MCP_CNF2, 0xb1);		//see can config sheet on github
+	CAN_write(MCP_CNF1, 0x03);		//see can config sheet on github
 	
 	CAN_write(MCP_CANINTE, MCP_RX_INT); //Turn on RX interupt	
 	CAN_bit_modify(MCP_CANCTRL, MODE_POWERUP, MODE_NORMAL);
@@ -108,9 +112,6 @@ can_message CAN_message_receive(void){
 	can_message msg = {};
 
 	// read message id
-	//uint8_t id_low = (CAN_read(MCP_RXB0SIDL) >> 5);
-	//uint8_t id_high = CAN_read(MCP_RXB0SIDH);
-	//msg.id = id_high * 0b1000 + id_low;
 	msg.id = (CAN_read(MCP_RXB1SIDH) * 8) + (CAN_read(MCP_RXB1SIDL) >> 5);
 
 	// read data length

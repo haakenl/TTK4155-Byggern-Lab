@@ -74,7 +74,8 @@ void GUI_menu_action(int current_page){
 		OLED_printf("HAVE FUN");
 		_delay_ms(1000); // INSERT GAME PLAY HERE
 		
-		while(1){
+		uint8_t stopp_trasmitting_ADC_values = 1;
+		while(stopp_trasmitting_ADC_values){
 		
 		if(!(test_bit(PINB, PINB1))){
 			Button_to_node2.id = 2;
@@ -88,11 +89,7 @@ void GUI_menu_action(int current_page){
 			Button_to_node2.data[0] = 0;
 			CAN_message_send(&Button_to_node2);
 		}
-		
-		
-		
-		ADC_pos adc_pos = ADC_read();
-				
+		ADC_pos adc_pos = ADC_read();		
 		ADC_to_node2.id = 3;
 		ADC_to_node2.data_length = 2;
 		ADC_to_node2.data[0] = adc_pos.joy_x ;

@@ -44,5 +44,6 @@ void GUI_menu();
 
 can_message ADC_to_node2;
 can_message Button_to_node2;
+can_message game_ended;
 
 #endif /* GUI_H_ */

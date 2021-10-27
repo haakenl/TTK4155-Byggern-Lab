@@ -12,7 +12,7 @@
 #include "sam.h"
 
 void PWM_init(void);
-void set_servo_pos(uint8_t value);
+void set_servo_pos(int value);
 
 
 #endif /* PWM_H_ */

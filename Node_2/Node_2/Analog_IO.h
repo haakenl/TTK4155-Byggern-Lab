@@ -17,7 +17,9 @@
 
 
 void Analog_IO_init(void);
+uint8_t IR_detection(void);
 void set_analog_value(uint16_t value);
+
 
 
 #endif /* ANALOG_IO_H_ */

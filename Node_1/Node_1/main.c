@@ -34,7 +34,7 @@ int main(void)
 	GUI_print_menu(current_menu);
 	GUI_print_arrow(0);
 	
-	can_message test_control;
+	//can_message test_control;
 	
 	while(1){
 	//for(unsigned int i = 0; i < 10;){
@@ -44,7 +44,7 @@ int main(void)
 		//ADC_direction direction;
 		
 		//printf("\n");
-		//printf("ADC Ch1 read (joystick y-axis) %4d\n", ADC_to_prosent(joystick_pos.joy_y));
+		//printf("ADC Ch1 read (joystick y-axis) %4d\n", joystick_pos.joy_y);
 		//printf("ADC Ch2 read (joystick x-axis) %4d\n", ADC_to_prosent(joystick_pos.joy_x));
 		//printf("ADC Ch3 read (right slider) %4d\n", ADC_to_prosent(joystick_pos.slider_right));
 		//printf("ADC Ch4 read (left slider) %4d\n", ADC_to_prosent(joystick_pos.slider_left));

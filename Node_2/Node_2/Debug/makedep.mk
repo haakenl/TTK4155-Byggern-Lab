@@ -16,7 +16,11 @@ IO.c
 
 main.c
 
+motor.c
+
 PWM.c
+
+Timer.c
 
 uart_and_printf\printf_stdarg.c
 
