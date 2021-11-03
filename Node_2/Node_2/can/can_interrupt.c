@@ -15,6 +15,7 @@
 #include "../uart_and_printf/printf_stdarg.h"
 #include "../PWM.h"
 #include "../IO.h"
+#include "../motor.h"
 
 #define DEBUG_INTERRUPT 0
 
@@ -52,6 +53,7 @@ void CAN0_Handler( void )
 		
 		if(message.id == 3){
 			set_servo_pos(message.data[1]);
+			update_pos_ref(message.data[0]);
 		}
 		
 		if(message.id == 2){

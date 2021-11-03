@@ -23,6 +23,8 @@ void Analog_IO_init(void){
 	//ADC -> ADC_EMR = ADC_EMR_CMPMODE_LOW| ADC_EMR_CMPSEL(7) | ADC_EMR_CMPFILTER(5); 
 	//ADC -> ADC_CWR = ADC_CWR_LOWTHRES(800); 	
 
+
+
 	/* Set up motor DAC (MJEX) */
 	DACC -> DACC_WPMR &= ~ DACC_WPMR_WPEN;	// Disable DAC Write protection 
 	PMC -> PMC_PCER1 |= PMC_PCER1_PID38;	// Enable peripheral clock for DAC
@@ -33,19 +35,27 @@ void Analog_IO_init(void){
 	DACC -> DACC_CDR = 0;							// Set initial value to zero.
 }
 
+//void ADC_Handler(void){
+//	game_score = game_score + 1;
+//	set_green_LED;
+//}
 
 uint8_t IR_detection(void){
-	if(Read_IR_VALUE < 400){
-		_delay_ms(50);
+	uint8_t score = 0;
+	if(Read_IR_VALUE < 100){
+		_delay_ms(20);
 		if(Read_IR_VALUE < 400){
-			return 1;
+			score = 1;
 		}
 	}
-	return 0;
+	return score;
 }
 			
 
 
 void set_analog_value(uint16_t value){
-	DACC -> DACC_CDR = value*4095/100;	 
+	if(value > 4095){
+		value = 4095;
+	}
+	DACC -> DACC_CDR = value;//*4095/100;	 
 }
