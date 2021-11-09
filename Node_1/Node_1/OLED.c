@@ -73,6 +73,14 @@ void OLED_clear_line(uint8_t line){
 	}
 }
 
+void OLED_clear_line_from(uint8_t page, uint8_t seg){
+	OLED_pos(page,seg);
+	for (uint8_t i = seg; i < 128; i++){
+		OLED_write_data(0x0);
+	}
+}
+
+
 void OLED_clear_arrow(void){
 	OLED_pos(0,0);
 	for (uint8_t j = 0; j < 8; j++){
@@ -91,6 +99,16 @@ void OLED_clear_all(){
 				OLED_write_data(0x0);
 			}
 		}
+}
+
+void OLED_fill_all(){
+	OLED_pos(0,0);
+	for (uint8_t j = 0; j < 8; j++){
+		OLED_pos(j,0);
+		for (uint8_t i = 0; i < 128; i++){
+			OLED_write_data(0xFF);
+		}
+	}
 }
 
 

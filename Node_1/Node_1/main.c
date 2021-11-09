@@ -18,14 +18,19 @@
 
 int main(void)
 {
-	/*Indicator led setup*/
+	/*Indicator LED setup*/
 	set_bit(LED_reg, LED_error);
 	set_bit(LED_reg, LED_normal);
 	
-	/* Turn on normal indicator */
+	/* Turn on set LEDS in normal "mode" */
 	clear_bit(LED_port, LED_normal);
 	set_bit(LED_port, LED_error);
+	
+	/* Enable internal pull-up on PB1 (joystick) */
+	set_bit(Button_port, Button_joy_port_bit);
+	set_bit(SPI_ext_port, SPI_SS_bit);
 		
+	/* Execute init's*/	
 	_delay_ms(1000); //Wait for OLED controller to turn on.
 	UART_init();
 	SRAM_init();
@@ -33,40 +38,31 @@ int main(void)
 	OLED_init();
 	GUI_init();
 	SPI_MasterInit();
-	if (CAN_init() == 1 ){
-		printf("CAN init error\n");
-		set_bit(LED_port, LED_normal);
-		clear_bit(LED_port, LED_error);
-	}
+	errorflag = CAN_init();
 	
-	set_bit(PORTB, PB1);	// Enable internal pull-up on PB1	
-
+	/* Print menu */
 	GUI_print_menu(current_menu);
 	GUI_print_arrow(0);
 	
 	//can_message test_control;
 	
 	while(1){
-	//for(unsigned int i = 0; i < 10;){
 		//SRAM_test();
 		//clear_bit(LED_port, LED_error);
 		//_delay_ms(1000);
 		//set_bit(LED_port, LED_error);
 		//_delay_ms(1000);
-	
 		
-	
-		ADC_pos joystick_pos = ADC_read();
-		ADC_direction direction;
+		//ADC_pos joystick_pos = ADC_read();
+		//ADC_direction direction;
 		
-		printf("\n");
-		printf("ADC Ch1 read (joystick y-axis) %4d\n", ADC_to_prosent(joystick_pos.joy_x));
-		printf("ADC Ch2 read (joystick x-axis) %4d\n", ADC_to_prosent(joystick_pos.joy_x));
-		printf("ADC Ch3 read (right slider) %4d\n", ADC_to_prosent(joystick_pos.slider_right));
-		printf("ADC Ch4 read (left slider) %4d\n", ADC_to_prosent(joystick_pos.slider_left));
-		printf("Direction: %x\n", joystick_direction());
-		_delay_ms(1000);
-		
+		//printf("\n");
+		//printf("ADC Ch1 read (joystick y-axis) %4d\n", ADC_to_prosent(joystick_pos.joy_x));
+		//printf("ADC Ch2 read (joystick x-axis) %4d\n", ADC_to_prosent(joystick_pos.joy_x));
+		//printf("ADC Ch3 read (right slider) %4d\n", ADC_to_prosent(joystick_pos.slider_right));
+		//printf("ADC Ch4 read (left slider) %4d\n", ADC_to_prosent(joystick_pos.slider_left));
+		//printf("Direction: %x\n", joystick_direction());
+		//_delay_ms(1000);
 		
 		//ADC_read();
 		
@@ -90,9 +86,13 @@ int main(void)
 			printf("data %d\n\n", test_control.data[0]);		
 		}*/
 
-		
-
-		//GUI_menu();		
+		/* Check error flag*/
+		if(errorflag == 1){
+			set_bit(LED_port, LED_normal);
+			clear_bit(LED_port, LED_error);
+		}
+				
+		GUI_menu();		
 	}
 		return 0;
 }

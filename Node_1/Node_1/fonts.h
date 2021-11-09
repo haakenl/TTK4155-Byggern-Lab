@@ -12,6 +12,7 @@
 char font_size = 5;  //Default font size
 unsigned char font;
 
+
 // Font 8x8 - Large
 const unsigned char PROGMEM font8[95][8] = {
 	{0b00000000,0b00000000,0b00000000,0b00000000,0b00000000,0b00000000,0b00000000,0b00000000}, //
