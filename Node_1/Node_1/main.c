@@ -38,7 +38,8 @@ int main(void)
 	OLED_init();
 	GUI_init();
 	SPI_MasterInit();
-	CAN_init();//errorflag = CAN_init();
+	//CAN_init();
+	errorflag = CAN_init();
 	
 	
 	/* Print menu */

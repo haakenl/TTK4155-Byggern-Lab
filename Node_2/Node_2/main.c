@@ -58,7 +58,8 @@ int main(void)
 			game_score = game_score + 1;
 		}
 		
-		if(game_clock >= 600 && game_ended == 0){ //game time = 1 min
+		
+		if(game_clock >= 6000 && game_ended == 0){ //game time = 1 min
 			game_ended = 1;
 			
 			// Send CAN message

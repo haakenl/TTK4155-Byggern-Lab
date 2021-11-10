@@ -133,7 +133,6 @@ void GUI_menu_action(int current_page){
 		OLED_printf("HAVE FUN");
 		_delay_ms(1000); // INSERT GAME PLAY HERE
 		
-		
 		uint8_t score = 0;
 		
 		game.id = 4;			// New game 
@@ -157,7 +156,6 @@ void GUI_menu_action(int current_page){
 				Button_to_node2.data[0] = 0;
 				CAN_message_send(&Button_to_node2);
 			}
-			
 			/* Update ADC pos */
 			ADC_pos adc_pos = ADC_read();
 			ADC_to_node2.id = 3;
@@ -165,29 +163,32 @@ void GUI_menu_action(int current_page){
 			ADC_to_node2.data[0] = adc_pos.joy_x ;
 			ADC_to_node2.data[1] = adc_pos.joy_y; 			
 			CAN_message_send(&ADC_to_node2);
-		
 			/* Wait 16ms this gives ~60 ADC updates per seconded (same update frequency as digitizer on smart phones) */
-			_delay_ms(16);
-			
+			_delay_ms(16);	
 			if(test_bit(CAN_int_flag_reg, CAN_int_flag_bit) == 0){
-				game = CAN_message_receive();
-				if(game.id == 1){
-					stopp_trasmitting_ADC_values = game.data[1];
+				game_ended = CAN_message_receive();
+				if(game_ended.id == 1){
+					score = game_ended.data[0];
+					stopp_trasmitting_ADC_values = game_ended.data[1];
 				}
 			}
 		}
-			
-			OLED_clear_all();
-			OLED_pos(3, 30);
-			//char score_print[1];
-			//sprintf(score_print, "Game Score: %d", game.data[0]);
-			//OLED_printf(score_print);
-			OLED_printf("test");
-			_delay_ms(1000);
+		OLED_clear_line(0);
+		OLED_pos(0,0);
+		OLED_pos(3, 30);
+		char score_print[1];
+		sprintf(score_print, "Game Score: %d", score);
+		OLED_printf(score_print);
+		//OLED_printf("test");
+		_delay_ms(2000);
+		OLED_pos(7, 0);
+		GUI_print_string(7); //Print Move joy left to exit"	
+		while(current_direction != LEFT){
+			current_direction = debounce_joystick_direction();
+		}	
 	
-		
 	}
-	else if(strcmp("High Score", current_child) == 0){
+	if(strcmp("High Score", current_child) == 0){
 			OLED_pos(3, 24);
 			GUI_print_string(0); //Print "high score here"
 			_delay_ms(2000);		
@@ -309,7 +310,7 @@ void GUI_menu_action(int current_page){
 				OLED_clear_line(0);
 				OLED_pos(0,0);
 				GUI_print_string(19); //Print "SRAM Finished..."
-				while(current_direction == RIGHT){
+				while(current_direction != LEFT){
 					current_direction = debounce_joystick_direction();
 				}
 			}

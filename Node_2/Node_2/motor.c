@@ -18,8 +18,8 @@ void motor_init(void){
 	encoder_range = read_encoder();
 	set_motor_speed(0);	
 	PID.pos_ref = encoder_range/2;
-	PID.Kp = 0.5;
-	PID.Ki = 0.2;
+	PID.Kp = 0.7;
+	PID.Ki = 0.00;//0.2;
 			
 	}
 	
@@ -68,10 +68,36 @@ void update_pos_ref(uint16_t ref_pos){
 	}
 	//printf("ref_pos = %d/n", ref_pos);
 	PID.pos_ref = (encoder_range/2)-(ref_pos-130)*90;
+	//PID.pos_ref = ref_pos/255*100; //
 }
+
+//void PID_regulator(void){
+	//PID.pos = read_encoder()/encoder_range*100;
+	//
+	//if (PID.pos < 0){
+		//PID.pos = 0;
+	//}
+	//else if(PID.pos > encoder_range){
+		//PID.pos = encoder_range;
+	//}
+	//
+	//PID.error = PID.pos_ref - PID.pos;
+	//
+	//if(abs(PID.error) < 1){
+		//PID.error_i = 0;
+	//}
+	//else{
+		//PID.error_i = PID.error_i + PID.error;	
+	//}
+	//
+	//PID.output = PID.error*PID.Kp + PID.error_i*PID.Ki;
+	//
+	//set_motor_speed((int16_t)PID.output);	
+//}
 
 void PID_regulator(void){
 	PID.pos = read_encoder();
+	
 	if (PID.pos < 0){
 		PID.pos = 0;
 	}
@@ -85,10 +111,10 @@ void PID_regulator(void){
 		PID.error_i = 0;
 	}
 	else{
-		PID.error_i = PID.error_i + PID.error;	
+		PID.error_i = PID.error_i + PID.error;
 	}
 	
 	PID.output = PID.error*PID.Kp + PID.error_i*PID.Ki;
 	
-	set_motor_speed((int16_t)PID.output);	
+	set_motor_speed((int16_t)PID.output);
 }
