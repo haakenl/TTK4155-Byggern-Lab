@@ -92,9 +92,9 @@ void SRAM_test_OLED_print(void)
 	}
 	
 	_delay_ms(100);
-	char write_errors_print[40];
+	char write_errors_print[1];
 	sprintf(write_errors_print, "Write errors: %d", write_errors);
-	char retrieval_errors_print[40];
+	char retrieval_errors_print[1];
 	sprintf(retrieval_errors_print, "Retrieval errors: %d", retrieval_errors);
 	
 	OLED_clear_line(1);

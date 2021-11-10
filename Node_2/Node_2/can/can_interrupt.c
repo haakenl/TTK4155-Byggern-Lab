@@ -16,6 +16,7 @@
 #include "../PWM.h"
 #include "../IO.h"
 #include "../motor.h"
+#include "../Timer.h"
 
 #define DEBUG_INTERRUPT 0
 
@@ -51,19 +52,25 @@ void CAN0_Handler( void )
 		}
 		
 		
-		if(message.id == 3){
-			set_servo_pos(message.data[1]);
-			update_pos_ref(message.data[0]);
+		if(message.id == 4){
+			game_clock = message.data[0];
+			game_score = message.data[0];
+			game_ended = message.data[0];
 		}
-		
 		if(message.id == 2){
 			if(message.data[0] == 1){
-				activate_solenoid;		
+				activate_solenoid;
 			}
 			if(message.data[0] == 0){
 				deactivate_solenoid;
 			}
 		}
+		if(message.id == 3){
+			set_servo_pos(message.data[1]);
+			update_pos_ref(message.data[0]);
+		}
+		
+
 			
 		if(DEBUG_INTERRUPT)printf("message id: %d\n\r", message.id);
 		if(DEBUG_INTERRUPT)printf("message data length: %d\n\r", message.data_length);

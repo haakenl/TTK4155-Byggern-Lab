@@ -13,7 +13,7 @@
 #include "Timer.h"
 #include "IO.h"
 #include "Analog_IO.h"
-#include "math.h"
+#include "stdlib.h"
 
 
 void motor_init(void);

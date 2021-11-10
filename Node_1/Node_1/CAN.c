@@ -109,7 +109,7 @@ void CAN_message_send(struct can_message* msg){
 
 can_message CAN_message_receive(void){
 	can_message msg = {};
-
+	_delay_us(50);
 	// read message id
 	msg.id = (CAN_read(MCP_RXB1SIDH) * 8) + (CAN_read(MCP_RXB1SIDL) >> 5);
 

@@ -16,6 +16,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <util/delay.h>
 #include <stdbool.h>
 #include <string.h>
@@ -37,6 +38,10 @@
 #define LED_port PORTD
 #define LED_error PIND5
 #define LED_normal PIND4
+
+#define CAN_int_flag_reg PIND
+#define CAN_int_flag_bit PD2
+
 
 #define set_bit(reg, bit) (reg |= (1 << bit))
 #define clear_bit(reg, bit) (reg &= ~(1 << bit))

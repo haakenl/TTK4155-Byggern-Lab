@@ -18,7 +18,7 @@
 #define clear_green_LED PIOA -> PIO_CODR |= PIO_SODR_P20;	// Clear P20 (D3)
 
 /* Set up Solenoid */
-#define deactivate_solenoid	PIOC -> PIO_SODR |= PIO_SODR_P12;	// Set P12 (solenoid)
+#define deactivate_solenoid	PIOC -> PIO_SODR |= PIO_SODR_P12;	// Set P12 (solenoid) 
 #define activate_solenoid PIOC -> PIO_CODR |= PIO_SODR_P12;		// Clear P12 (solenoid)
 
 

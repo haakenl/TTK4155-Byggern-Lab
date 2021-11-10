@@ -11,6 +11,7 @@
 
 #include "sam.h"
 #include "IO.h"
+#include "motor.h"
 
 void Timer_init(void);
 void _delay_ms(uint32_t ms);

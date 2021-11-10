@@ -17,9 +17,8 @@
 
 
 void Analog_IO_init(void);
-uint8_t IR_detection(void);
+uint8_t IR_detection(uint16_t threshold);
 void set_analog_value(uint16_t value);
 
-int8_t game_score;
 
 #endif /* ANALOG_IO_H_ */

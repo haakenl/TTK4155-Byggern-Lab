@@ -35,7 +35,7 @@ ADC_pos ADC_read(){
 }
 
 void joystick_calibrate(){
-	ADC_pos pos = ADC_read(); //Dummy write to stop to prevent OLED interfering with ADC.
+	ADC_pos pos = ADC_read(); //Dummy read
 	double AVG_joy_x;
 	double AVG_joy_y;
 	
@@ -49,7 +49,7 @@ void joystick_calibrate(){
 	joy_y_offset = AVG_joy_y/10;
 }
 
-// Determine the location of the joystick based on its distance from the center
+/* Determine the location of the joystick based on its distance from the center */
 ADC_direction joystick_direction(){
 	ADC_pos pos = ADC_read();
 	
@@ -78,6 +78,7 @@ ADC_direction joystick_direction(){
 	}
 }
 
+
 ADC_direction debounce_joystick_direction(){
 		ADC_direction current_direction;
 		ADC_direction debounce_direction;
@@ -93,7 +94,6 @@ ADC_direction debounce_joystick_direction(){
 			return NEUTRAL;
 		}		
 }
-
 
 unsigned int ADC_to_prosent(unsigned int value){
 	return value*100/255;

@@ -18,7 +18,7 @@
 #include "motor.h"
 
 
-CAN_MESSAGE game_over;
+
 
 
 int main(void)
@@ -32,50 +32,47 @@ int main(void)
 	IO_Init();
 	Analog_IO_init();
 	PWM_init();
-	Timer_init();
 	motor_init();
+	Timer_init();
 	
 	
 	//printf("Welcome PuTTY's\n\r");
 	//set_orange_LED;
-	
-	game_over.id = 1;
-	game_over.data_length = 1;
-	game_over.data[0] = 0;
-	//set_green_LED;
+	set_green_LED;
 	
 	
+	//game.id = 1;
+	//game.data_length = 2;
+	//game.data[0] = 0;
+	//game.data[1] = 0;
+		
 	game_score = 0;
-    while (1) 
+    game_ended = 1;
+	//uint8_t resend_can = 0;
+	//uint8_t mail_box = 0;
+	
+	while (1) 
     {
-		if(IR_detection() == 1){
+		if(IR_detection(300) == 1){
+			while(IR_detection(1500) == 1);
 			game_score = game_score + 1;
-			printf("score = %d\n", game_score);
-			//while(IR_detection() == 1);
 		}
 		
-		
-		//if(game_clock == 60000){
-			//game_over.data[0] = game_score;
-			//can_send(game_over, 1);
-		//}
-		
-		
-		
-		if(TC0_flag == 1){
-			TC0_flag  == 0;
-			PID_regulator();	
+		if(game_clock >= 600 && game_ended == 0){ //game time = 1 min
+			game_ended = 1;
+			
+			// Send CAN message
+			game.id = 1;
+			game.data_length = 2;
+			game.data[0] = game_score;
+			game.data[1] = game_ended;
+			while(can_send(&game, 0) == 1);
 		}
-		
-		
-		//_delay_ms(1000);
-		//printf("score = %d\n", game_score);
 	
-	
-		//_delay_ms(1000);
-		//test = read_encoder();	
-		//printf("test %d\n",test);
-		//printf("encoder range %d\n", encoder_range);
+		printf("score = %d\n", game_score);
+		printf("Game clock = %d\n", game_clock);
+		printf("Game ended = %d\n", game_ended);
+
     }
 }
 

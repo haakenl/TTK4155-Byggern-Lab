@@ -13,6 +13,8 @@
 #include "OLED.h"
 #include "ADC.h"
 #include "CAN.h"
+#include "SRAM.h"
+#include "UART.h"
 
 typedef struct menu_t{
 	const char* name;
@@ -42,7 +44,7 @@ void GUI_menu();
 
 can_message ADC_to_node2;
 can_message Button_to_node2;
-can_message game_ended;
+can_message game;
 
 
 #endif /* GUI_H_ */

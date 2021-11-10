@@ -133,34 +133,59 @@ void GUI_menu_action(int current_page){
 		OLED_printf("HAVE FUN");
 		_delay_ms(1000); // INSERT GAME PLAY HERE
 		
-		uint8_t stopp_trasmitting_ADC_values = 1;
-		while(stopp_trasmitting_ADC_values){
 		
-		if(!(test_bit(PINB, PINB1))){
-			Button_to_node2.id = 2;
-			Button_to_node2.data_length = 1;
-			Button_to_node2.data[0] = 1;
-			CAN_message_send(&Button_to_node2);
-			_delay_ms(50);
-			while(!(test_bit(PINB, PINB1)));
-			Button_to_node2.id = 2;
-			Button_to_node2.data_length = 1;
-			Button_to_node2.data[0] = 0;
-			CAN_message_send(&Button_to_node2);
-		}
-		ADC_pos adc_pos = ADC_read();		
-		ADC_to_node2.id = 3;
-		ADC_to_node2.data_length = 2;
-		ADC_to_node2.data[0] = adc_pos.joy_x ;
-		ADC_to_node2.data[1] = adc_pos.joy_y; 			
-		CAN_message_send(&ADC_to_node2);
-		_delay_ms(16);
-		}
+		uint8_t score = 0;
 		
-		OLED_clear_all();
-		OLED_pos(3, 39);
-		OLED_printf("GAME ENDED");
-		_delay_ms(1000);
+		game.id = 4;			// New game 
+		game.data_length = 2;
+		game.data[0] = 0;		// reset game score
+		game.data[1] = 0;		// reset and game clock
+		CAN_message_send(&game);
+		
+		uint8_t stopp_trasmitting_ADC_values = 0;
+		while(stopp_trasmitting_ADC_values == 0){
+			/* Shoot! */
+			if(!(test_bit(PINB, PINB1))){
+				Button_to_node2.id = 2;
+				Button_to_node2.data_length = 1;
+				Button_to_node2.data[0] = 1;
+				CAN_message_send(&Button_to_node2);
+				_delay_ms(50);
+				while(!test_bit(Button_pin, Button_joy_bit));
+				Button_to_node2.id = 2;
+				Button_to_node2.data_length = 1;
+				Button_to_node2.data[0] = 0;
+				CAN_message_send(&Button_to_node2);
+			}
+			
+			/* Update ADC pos */
+			ADC_pos adc_pos = ADC_read();
+			ADC_to_node2.id = 3;
+			ADC_to_node2.data_length = 2;
+			ADC_to_node2.data[0] = adc_pos.joy_x ;
+			ADC_to_node2.data[1] = adc_pos.joy_y; 			
+			CAN_message_send(&ADC_to_node2);
+		
+			/* Wait 16ms this gives ~60 ADC updates per seconded (same update frequency as digitizer on smart phones) */
+			_delay_ms(16);
+			
+			if(test_bit(CAN_int_flag_reg, CAN_int_flag_bit) == 0){
+				game = CAN_message_receive();
+				if(game.id == 1){
+					stopp_trasmitting_ADC_values = game.data[1];
+				}
+			}
+		}
+			
+			OLED_clear_all();
+			OLED_pos(3, 30);
+			//char score_print[1];
+			//sprintf(score_print, "Game Score: %d", game.data[0]);
+			//OLED_printf(score_print);
+			OLED_printf("test");
+			_delay_ms(1000);
+	
+		
 	}
 	else if(strcmp("High Score", current_child) == 0){
 			OLED_pos(3, 24);
@@ -284,7 +309,6 @@ void GUI_menu_action(int current_page){
 				OLED_clear_line(0);
 				OLED_pos(0,0);
 				GUI_print_string(19); //Print "SRAM Finished..."
-				_delay_ms(2000);
 				while(current_direction == RIGHT){
 					current_direction = debounce_joystick_direction();
 				}

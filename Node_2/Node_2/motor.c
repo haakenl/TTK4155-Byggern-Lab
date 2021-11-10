@@ -89,8 +89,6 @@ void PID_regulator(void){
 	}
 	
 	PID.output = PID.error*PID.Kp + PID.error_i*PID.Ki;
-	//printf("pos = %.2\n", PID.pos);
-	//printf("posref = %.2\n", PID.pos_ref);
 	
 	set_motor_speed((int16_t)PID.output);	
 }
