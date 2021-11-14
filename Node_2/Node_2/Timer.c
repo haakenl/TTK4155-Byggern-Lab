@@ -23,7 +23,6 @@ void _delay_ms(uint32_t ms)
 	}
 }
 
-
 void Timer_init(void){
 									 
 	/* Setup Timer 0 */	
@@ -39,8 +38,6 @@ void Timer_init(void){
 	REG_TC0_RC0 = 26250;				// counts = 10ms/(32/MCK)
 	game_clock = 0;
 }
-
-
 
 void TC0_Handler(void){
 	uint32_t clear_TCO_flag = REG_TC0_SR0;//SR0_flag = REG_TC0_SR0;  // Interrupt flag is cleared by reading  

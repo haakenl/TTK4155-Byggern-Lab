@@ -2887,11 +2887,11 @@ int main(void)
     1592:	80 e0       	ldi	r24, 0x00	; 0
     1594:	90 e0       	ldi	r25, 0x00	; 0
     1596:	0e 94 8f 05 	call	0xb1e	; 0xb1e <GUI_print_arrow>
-		printf("Direction: %x\n", joystick_direction());
-		_delay_ms(1000);
-		*/
-		
-		/* Check error flag*/
+			//printf("mail 1 data 0 %d\n", test_control.data[0]);
+			//printf("mail 1 data 1 %d\n", test_control.data[1]);
+			//}
+		//}
+			
 		if(errorflag == 1){
     159a:	80 91 31 02 	lds	r24, 0x0231	; 0x800231 <errorflag>
     159e:	81 30       	cpi	r24, 0x01	; 1
@@ -2900,12 +2900,9 @@ int main(void)
     15a2:	94 9a       	sbi	0x12, 4	; 18
 			clear_bit(LED_port, LED_error);
     15a4:	95 98       	cbi	0x12, 5	; 18
-		}		
+		}
 		GUI_menu();
     15a6:	0e 94 20 0a 	call	0x1440	; 0x1440 <GUI_menu>
-				//printf("mail 1 data 1 %d\n", test_control.data[1]);
-				//}
-			//}
 
 		
 	}

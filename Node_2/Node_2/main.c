@@ -38,18 +38,10 @@ int main(void)
 	
 	printf("Welcome PuTTY's\n\r");
 	//set_orange_LED;
-	//set_green_LED;
-	
-	
-	//game.id = 1;
-	//game.data_length = 2;
-	//game.data[0] = 0;
-	//game.data[1] = 0;
+	set_green_LED;
 		
 	game_score = 0;
     game_ended = 1;
-	//uint8_t resend_can = 0;
-	//uint8_t mail_box = 0;
 	
 	//game.id = 1;
 	//game.data_length = 2;
