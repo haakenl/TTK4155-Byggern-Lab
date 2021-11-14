@@ -17,8 +17,8 @@
 #include "UART.h"
 
 typedef struct menu_t{
-	const char* name;
-	unsigned int number_of_childs;
+	const uint8_t name;
+	const uint8_t number_of_childs;
 	const struct menu_t* parent;
 	const struct menu_t* children[8];	
 } menu_t;
@@ -31,7 +31,6 @@ menu_t* current_menu;
 //menu_t auto_calibrate_joy; 
 //menu_t clear_high_score; 
 
-
 void GUI_init();
 void GUI_print_menu(menu_t* print_menu);
 void GUI_print_arrow(int page);
@@ -40,12 +39,9 @@ int GUI_menu_up(int current_page);
 void GUI_menu_action(int current_page);
 void GUI_menu();
 
-
-
 can_message ADC_to_node2;
 can_message Button_to_node2;
 can_message game;
 can_message game_ended;
-
 
 #endif /* GUI_H_ */

@@ -40,30 +40,53 @@ const char str24[] PROGMEM = "- 2 Stop bits";
 const char str25[] PROGMEM = "'External' SPI config:";
 const char str26[] PROGMEM = "- Slave";
 const char str27[] PROGMEM = "- SS high";
-const char str28[] PROGMEM = "";
-const char str29[] PROGMEM = "";
+const char str28[] PROGMEM = "Main Menu";
+const char str29[] PROGMEM = "New Game";
+const char str30[] PROGMEM = "High Score";
+const char str31[] PROGMEM = "Clear High Score";
+const char str32[] PROGMEM = "Settings";
+const char str33[] PROGMEM = "Auto Calibrate Joy";
+const char str34[] PROGMEM = "Adjust Joy Deadband";
+const char str35[] PROGMEM = "ADC test";
+const char str36[] PROGMEM = "OLED test";
+const char str37[] PROGMEM = "SRAM test";
+const char str38[] PROGMEM = "RS-232 loop back";
+const char str39[] PROGMEM = "SPI loop back";
+const char str40[] PROGMEM = "Score: %d";
+const char str41[] PROGMEM = "deadband: %d";
+const char str42[] PROGMEM = "HAVE FUN";
+const char str43[] PROGMEM = "";
+const char str44[] PROGMEM = "";
+const char str45[] PROGMEM = "";
+const char str46[] PROGMEM = "";
+const char str47[] PROGMEM = "";
+const char str48[] PROGMEM = "";
+const char str49[] PROGMEM = "";
+
 
 PGM_P const string_table[] PROGMEM =
 {
 	str00, str01, str02, str03, str04, str05, str06, str07, str08, str09, 
 	str10, str11, str12, str13, str14, str15, str16, str17, str18, str19, 
-	str20, str21, str22, str23, str24, str25, str26, str27, str28, str29
+	str20, str21, str22, str23, str24, str25, str26, str27, str28, str29,
+	str30, str31, str32, str33, str34, str35, str36, str37, str38, str39,
+	str40, str41, str42, str43, str44, str45, str46, str47, str48, str49
 };
 
 char buffer[1];
 
-			menu_t SPI_loopback = {"SPI loop back", 0, &SPI_loopback};	
-			menu_t RS232_loopback = {"RS-232 loop back", 0, &RS232_loopback};
-			menu_t SRAM_test_menu = {"SRAM test", 0, &SRAM_test_menu};
-			menu_t OLED_test = {"OLED test", 0, &OLED_test};
-			menu_t ADC_test = {"ADC test", 0, &ADC_test};
-			menu_t Adjust_joy_deadband = {"Adjust Joy Deadband", 0, &Adjust_joy_deadband};
-			menu_t auto_calibrate_joy = {"Auto Calibrate Joy", 0, &auto_calibrate_joy};
-		menu_t settings = {"Settings", 7, NULL, {&auto_calibrate_joy, &Adjust_joy_deadband, &ADC_test, &OLED_test, &SRAM_test_menu, &RS232_loopback, &SPI_loopback}};
-		menu_t clear_high_score = {"Clear High Score", 0, &clear_high_score};
-		menu_t high_score = {"High Score", 0, &high_score};
-		menu_t new_game = {"New Game", 0, &new_game};
-		menu_t main_menu = {"Main Menu", 4, NULL, {&new_game, &high_score, &clear_high_score, &settings}};
+			menu_t SPI_loopback = {39, 0, &SPI_loopback};	
+			menu_t RS232_loopback = {38, 0, &RS232_loopback};
+			menu_t SRAM_test_menu = {37, 0, &SRAM_test_menu};
+			menu_t OLED_test = {36, 0, &OLED_test};
+			menu_t ADC_test = {35, 0, &ADC_test};
+			menu_t Adjust_joy_deadband = {34, 0, &Adjust_joy_deadband};
+			menu_t auto_calibrate_joy = {33, 0, &auto_calibrate_joy};
+		menu_t settings = {32, 7, NULL, {&auto_calibrate_joy, &Adjust_joy_deadband, &ADC_test, &OLED_test, &SRAM_test_menu, &RS232_loopback, &SPI_loopback}};
+		menu_t clear_high_score = {31, 0, &clear_high_score};
+		menu_t high_score = {30, 0, &high_score};
+		menu_t new_game = {29, 0, &new_game};
+		menu_t main_menu = {28, 4, NULL, {&new_game, &high_score, &clear_high_score, &settings}};
 	menu_t* current_menu;
 
 void GUI_init(){
@@ -88,13 +111,14 @@ void GUI_print_menu(menu_t* print_menu){
 	OLED_clear_all();
 	for(int i=0; i<print_menu->number_of_childs; i++) {
 		OLED_pos(i, 15);
-		OLED_printf((print_menu->children[i])->name);
+		strcpy_P(buffer, (PGM_P)pgm_read_word(&(string_table[(print_menu->children[i])->name])));
+		OLED_printf(buffer);
 	}
 }
 
 void GUI_print_string(uint16_t i){
 	strcpy_P(buffer, (PGM_P)pgm_read_word(&(string_table[i])));
-	OLED_printf(buffer); //Print high score here
+	OLED_printf(buffer); 
 }
 
 void GUI_print_arrow(int page){
@@ -125,24 +149,26 @@ int GUI_menu_up(int current_page){
 
 void GUI_menu_action(int current_page){
 	ADC_direction current_direction;
-	char*  current_child;
+	uint8_t  current_child;
 	current_child = current_menu->name;
 	
-	if(strcmp("New Game", current_child) == 0){
+	/* New game */
+	if(current_child == 29){ 
 		OLED_pos(3, 43);
-		OLED_printf("HAVE FUN");
-		_delay_ms(1000); // INSERT GAME PLAY HERE
+		GUI_print_string(42); //Print "HAVE FUN"
+		_delay_ms(500);
 		
 		uint8_t score = 0;
-		
+		uint8_t read_can_flag = 1;
+	
 		game.id = 4;			// New game 
 		game.data_length = 2;
 		game.data[0] = 0;		// reset game score
 		game.data[1] = 0;		// reset and game clock
 		CAN_message_send(&game);
 		
-		uint8_t stopp_trasmitting_ADC_values = 0;
-		while(stopp_trasmitting_ADC_values == 0){
+		uint8_t stop_transmitting_ADC_values = 0;
+		while(stop_transmitting_ADC_values == 0){
 			/* Shoot! */
 			if(!(test_bit(PINB, PINB1))){
 				Button_to_node2.id = 2;
@@ -164,41 +190,64 @@ void GUI_menu_action(int current_page){
 			ADC_to_node2.data[1] = adc_pos.joy_y; 			
 			CAN_message_send(&ADC_to_node2);
 			/* Wait 16ms this gives ~60 ADC updates per seconded (same update frequency as digitizer on smart phones) */
-			_delay_ms(16);	
-			if(test_bit(CAN_int_flag_reg, CAN_int_flag_bit) == 0){
-				game_ended = CAN_message_receive();
-				if(game_ended.id == 1){
-					score = game_ended.data[0];
-					stopp_trasmitting_ADC_values = game_ended.data[1];
+			_delay_ms(16);
+		
+			read_can_flag = test_bit(CAN_int_flag_reg, CAN_int_flag_bit);
+			if(read_can_flag == 0){
+				printf("flag \n");
+				CAN_mailbox();
+				if(CAN_mailbox_0_recive_flag == 1){
+					printf("mail 0 \n");
+					game_ended = CAN_message_receive(0);
+					printf("mail 0 id %d\n", game_ended.id);
+					if (game_ended.id  == 1){
+						score = game_ended.data[0];
+						stop_transmitting_ADC_values = game_ended.data[1];
+					}
+				}
+				if(CAN_mailbox_1_recive_flag == 1){
+					printf("mail 0 \n");
+					game_ended = CAN_message_receive(1);
+					printf("mail 1 id %d\n", game_ended.id);
+					if (game_ended.id  == 1){
+						score = game_ended.data[0];
+						stop_transmitting_ADC_values = game_ended.data[1];
+					}
 				}
 			}
 		}
-		OLED_clear_line(0);
-		OLED_pos(0,0);
-		OLED_pos(3, 30);
-		char score_print[1];
-		sprintf(score_print, "Game Score: %d", score);
+			
+		OLED_clear_all();
+		char score_print[20];
+		strcpy_P(buffer, (PGM_P)pgm_read_word(&(string_table[40])));
+		sprintf(score_print, buffer, score);
+		OLED_pos(3, 40);
 		OLED_printf(score_print);
-		//OLED_printf("test");
-		_delay_ms(2000);
 		OLED_pos(7, 0);
-		GUI_print_string(7); //Print Move joy left to exit"	
+		GUI_print_string(7); //Print "Move joy left to exit"
+		current_direction = debounce_joystick_direction();
 		while(current_direction != LEFT){
 			current_direction = debounce_joystick_direction();
 		}	
-	
+	_delay_ms(200);
 	}
-	if(strcmp("High Score", current_child) == 0){
+	
+	/* High Score */
+	else if(current_child == 30){ 
 			OLED_pos(3, 24);
 			GUI_print_string(0); //Print "high score here"
 			_delay_ms(2000);		
 	}
-	else if (strcmp("Clear High Score", current_child) == 0){
+	
+	/* Clear High Score */
+	else if(current_child == 31){ 
 			OLED_pos(3, 19);
 			GUI_print_string(1); //Print "High Score Cleared"
 			_delay_ms(2000);
 	}
-	else if (strcmp("Auto Calibrate Joy", current_child) == 0){
+	
+	/* Auto Calibrate Joy */
+	else if(current_child == 33){ 
 			OLED_pos(3, 14);
 			GUI_print_string(2); //Print "Calibrating Joystick" 
 			OLED_pos(4, 34);
@@ -207,7 +256,9 @@ void GUI_menu_action(int current_page){
 			joystick_calibrate();
 			_delay_ms(2000);
 	}
-	else if (strcmp("Adjust Joy Deadband", current_child) == 0){
+	
+	/* Adjust Joy Deadband */
+	else if(current_child == 34){ 
 		char joy_deadband_value[15];
 		OLED_pos(0, 0);
 		GUI_print_string(4); //Print "Adjust Joy Deadband"
@@ -226,22 +277,25 @@ void GUI_menu_action(int current_page){
 			else if(current_direction == DOWN){
 				joy_deadband --;	
 			}		
-			sprintf(joy_deadband_value, "deadband: %d", joy_deadband);
+			strcpy_P(buffer, (PGM_P)pgm_read_word(&(string_table[41])));
+			sprintf(joy_deadband_value, buffer, joy_deadband);
 			OLED_clear_line(4);
 			OLED_printf(joy_deadband_value);
 		}
 		_delay_ms(200);
 	}
-	else if (strcmp("ADC test", current_child) == 0){
+	
+	/* ADC test */
+	else if(current_child == 35){
 		OLED_pos(0, 30); 
 		GUI_print_string(8); //Print "0     Value     255"
 		OLED_pos(1, 1);
 		GUI_print_string(9); //Print "Ch 0"
-		OLED_pos(2, 0);
+		OLED_pos(2, 1);
 		GUI_print_string(10); //Print "Ch 1"
-		OLED_pos(3, 0);
+		OLED_pos(3, 1);
 		GUI_print_string(11); //Print "CH 2"
-		OLED_pos(4, 0);
+		OLED_pos(4, 1);
 		GUI_print_string(12); //Print "CH 3"
 		OLED_pos(6, 25);
 		GUI_print_string(13); //Print "Joy    Left    Right"
@@ -280,7 +334,9 @@ void GUI_menu_action(int current_page){
 		}
 		_delay_ms(200);
 	}	
-	else if (strcmp("OLED test", current_child) == 0){
+	
+	/* OLED test */
+	else if(current_child == 36){
 		OLED_fill_all();
 		_delay_ms(100);
 		current_direction = debounce_joystick_direction();
@@ -289,7 +345,9 @@ void GUI_menu_action(int current_page){
 		}
 	_delay_ms(200);
 	}
-	else if (strcmp("SRAM test", current_child) == 0){
+	
+	/* SRAM test */
+	else if(current_child == 37){
 		OLED_pos(0, 0);
 		GUI_print_string(15); //Print "SRAM test");
 		OLED_pos(1, 0);
@@ -310,6 +368,7 @@ void GUI_menu_action(int current_page){
 				OLED_clear_line(0);
 				OLED_pos(0,0);
 				GUI_print_string(19); //Print "SRAM Finished..."
+				current_direction = debounce_joystick_direction();
 				while(current_direction != LEFT){
 					current_direction = debounce_joystick_direction();
 				}
@@ -317,7 +376,9 @@ void GUI_menu_action(int current_page){
 		}
 		_delay_ms(200);
 	}
-	else if (strcmp("RS-232 loop back", current_child) == 0){
+	
+	/* RS-232 loop back */
+	else if(current_child == 38){ 
 		OLED_pos(0, 0);
 		GUI_print_string(20); //Print "RS-232 config:"
 		OLED_pos(1, 0);
@@ -339,7 +400,9 @@ void GUI_menu_action(int current_page){
 		}
 	_delay_ms(200);
 	}
-	else if (strcmp("SPI loop back", current_child) == 0){
+	
+	/* SPI loop back */
+	else if(current_child == 39){ 
 		OLED_pos(0, 0);
 		GUI_print_string(25); //Print "'External' SPI config:");
 		OLED_pos(1, 0);

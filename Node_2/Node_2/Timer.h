@@ -17,7 +17,7 @@ void Timer_init(void);
 void _delay_ms(uint32_t ms);
 void _delay_us(uint32_t us);
 
-volatile uint32_t game_clock;
+volatile uint16_t game_clock;
 volatile uint8_t TC0_flag;
 
 #endif /* TIMER_H_ */

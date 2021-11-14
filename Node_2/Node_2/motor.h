@@ -20,7 +20,7 @@ void motor_init(void);
 int16_t read_encoder(void);
 void set_motor_speed(int16_t speed_and_direction);
 void reset_encoder(void);
-void update_pos_ref(uint16_t ref_pos);
+void update_pos_ref(int16_t ref_pos);
 void PID_regulator(void);
  
 

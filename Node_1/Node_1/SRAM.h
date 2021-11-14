@@ -12,6 +12,7 @@
 #include "config.h"
 #include "OLED.h"
 
+
 void SRAM_init();
 void SRAM_write(uint8_t data, int index);
 uint8_t SRAM_read(int index);

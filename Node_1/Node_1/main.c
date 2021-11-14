@@ -46,7 +46,7 @@ int main(void)
 	GUI_print_menu(current_menu);
 	GUI_print_arrow(0);
 	
-	//can_message test_control;
+	can_message test_control;
 	
 	while(1){
 		/*
@@ -73,7 +73,30 @@ int main(void)
 			set_bit(LED_port, LED_normal);
 			clear_bit(LED_port, LED_error);
 		}		
-		GUI_menu();		
+		GUI_menu();
+		
+		
+			
+		//if(test_bit(CAN_int_flag_reg, CAN_int_flag_bit) == 0){
+			//CAN_mailbox();
+			//if(CAN_mailbox_0_recive_flag == 1){
+				//test_control = CAN_message_receive(0);
+				//printf("mail 0 id %d\n", test_control.id);
+				//printf("mail 0 length %d\n", test_control.data_length);
+				//printf("mail 0 data 0 %d\n", test_control.data[0]);
+				//printf("mail 0 data 1 %d\n", test_control.data[1]);
+			//}
+						//
+			//if(CAN_mailbox_1_recive_flag == 1){
+				//game_ended = CAN_message_receive(1);
+				//printf("mail 1 id %d\n", test_control.id);
+				//printf("mail 1 length %d\n", test_control.data_length);
+				//printf("mail 1 data 0 %d\n", test_control.data[0]);
+				//printf("mail 1 data 1 %d\n", test_control.data[1]);
+				//}
+			//}
+
+		
 	}
 		return 0;
 }

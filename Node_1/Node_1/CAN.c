@@ -107,20 +107,33 @@ void CAN_message_send(struct can_message* msg){
 }
 
 
-can_message CAN_message_receive(void){
+can_message CAN_message_receive(uint8_t mailbox){
 	can_message msg = {};
-
+	uint8_t mailbox_offset = 0;
+	if(mailbox == 1)
+	{
+		mailbox_offset = 10;
+	}
 	// read message id
-	msg.id = (CAN_read(MCP_RXB1SIDH) * 8) + (CAN_read(MCP_RXB1SIDL) >> 5);
+	msg.id = (CAN_read(MCP_RXB0SIDH  + mailbox_offset) * 8) + (CAN_read(MCP_RXB0SIDL + mailbox_offset) >> 5);
 
 	// read data length
-	msg.data_length = CAN_read(MCP_RXB1DL);
+	msg.data_length = CAN_read(MCP_RXB0DL + mailbox_offset);
 	
 	// read data
-	for (int i = 0; i < msg.data_length; i++) {
-		msg.data[i] = CAN_read(MCP_RXB1D0 + i);
+	if(msg.data_length > 8){
+		msg.data_length = 8;
+	}
+	for (uint8_t i = 0; i < msg.data_length; i++) {
+		msg.data[i] = CAN_read(MCP_RXB0D0 + mailbox_offset + i);
 	}
 	// reset int RX1 flag
-	CAN_bit_modify(MCP_CANINTF, MCP_RX1IF, 0);
+	CAN_bit_modify(MCP_CANINTF, (MCP_RX0IF  + mailbox), 0);
 	return msg;
+}
+
+void CAN_mailbox(void){
+	uint8_t int_flag = CAN_read(MCP_CANINTF);
+	CAN_mailbox_0_recive_flag = (int_flag & MCP_RX0IF);
+	CAN_mailbox_1_recive_flag = (int_flag & MCP_RX1IF);
 }

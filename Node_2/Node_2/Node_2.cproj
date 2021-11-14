@@ -34,7 +34,7 @@
     <com_atmel_avrdbg_tool_atmelice>
       <ToolOptions>
         <InterfaceProperties>
-          <JtagDbgClock>7499999</JtagDbgClock>
+          <JtagDbgClock>7500000</JtagDbgClock>
         </InterfaceProperties>
         <InterfaceName>JTAG</InterfaceName>
       </ToolOptions>
@@ -43,7 +43,7 @@
       <ToolName>Atmel-ICE</ToolName>
     </com_atmel_avrdbg_tool_atmelice>
     <avrtoolinterface>JTAG</avrtoolinterface>
-    <avrtoolinterfaceclock>7499999</avrtoolinterfaceclock>
+    <avrtoolinterfaceclock>7500000</avrtoolinterfaceclock>
     <AsfFrameworkConfig>
       <framework-data xmlns="">
         <options />

@@ -17,7 +17,7 @@
 
 typedef struct can_message{
 	uint16_t id;
-	uint8_t data_length;
+	char data_length;
 	char data[8];
 	}can_message;
 
@@ -30,7 +30,11 @@ void CAN_sw_reset(void);
 
 uint8_t CAN_init(void);
 void CAN_message_send(struct can_message* msg);
-can_message CAN_message_receive(void);
+can_message CAN_message_receive(uint8_t mailbox);
 void CAN_clear_RX0IF(void);
+void CAN_mailbox(void);
+
+uint8_t CAN_mailbox_0_recive_flag;
+uint8_t CAN_mailbox_1_recive_flag;
 
 #endif /* CAN_H_ */

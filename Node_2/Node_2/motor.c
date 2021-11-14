@@ -18,8 +18,8 @@ void motor_init(void){
 	encoder_range = read_encoder();
 	set_motor_speed(0);	
 	PID.pos_ref = encoder_range/2;
-	PID.Kp = 0.7;
-	PID.Ki = 0.00;//0.2;
+	PID.Kp = 0.35;
+	PID.Ki = PID.Kp/40; 
 			
 	}
 	
@@ -61,53 +61,36 @@ void set_motor_speed(int16_t speed_and_direction){
 	}
 }
 
-void update_pos_ref(uint16_t ref_pos){
+void update_pos_ref(int16_t ref_pos){
 	ref_pos = ref_pos - 38;    //offset compensating for Joystick
 	if (ref_pos < 38){
 		ref_pos = 38;
 	}
-	//printf("ref_pos = %d/n", ref_pos);
-	PID.pos_ref = (encoder_range/2)-(ref_pos-130)*90;
-	//PID.pos_ref = ref_pos/255*100; //
+	PID.pos_ref = (encoder_range/2)-(ref_pos-115)*100;
 }
 
-//void PID_regulator(void){
-	//PID.pos = read_encoder()/encoder_range*100;
-	//
-	//if (PID.pos < 0){
-		//PID.pos = 0;
-	//}
-	//else if(PID.pos > encoder_range){
-		//PID.pos = encoder_range;
-	//}
-	//
-	//PID.error = PID.pos_ref - PID.pos;
-	//
-	//if(abs(PID.error) < 1){
-		//PID.error_i = 0;
-	//}
-	//else{
-		//PID.error_i = PID.error_i + PID.error;	
-	//}
-	//
-	//PID.output = PID.error*PID.Kp + PID.error_i*PID.Ki;
-	//
-	//set_motor_speed((int16_t)PID.output);	
-//}
 
 void PID_regulator(void){
 	PID.pos = read_encoder();
-	
+		
 	if (PID.pos < 0){
 		PID.pos = 0;
 	}
-	else if(PID.pos > encoder_range){
-		PID.pos = encoder_range;
+	if(PID.pos > encoder_range){
+		PID.pos = encoder_range; 
+	}
+	
+	if(PID.pos_ref < 0){
+		PID.pos_ref = 0;
+	}
+	
+	if(PID.pos_ref > encoder_range){
+		PID.pos_ref = encoder_range; 
 	}
 	
 	PID.error = PID.pos_ref - PID.pos;
 	
-	if(abs(PID.error) < 100){
+	if(abs(PID.error) < 500){
 		PID.error_i = 0;
 	}
 	else{

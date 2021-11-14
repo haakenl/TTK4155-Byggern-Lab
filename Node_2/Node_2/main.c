@@ -36,9 +36,9 @@ int main(void)
 	Timer_init();
 	
 	
-	//printf("Welcome PuTTY's\n\r");
+	printf("Welcome PuTTY's\n\r");
 	//set_orange_LED;
-	set_green_LED;
+	//set_green_LED;
 	
 	
 	//game.id = 1;
@@ -51,28 +51,36 @@ int main(void)
 	//uint8_t resend_can = 0;
 	//uint8_t mail_box = 0;
 	
+	//game.id = 1;
+	//game.data_length = 2;
+	//game.data[0] = 1;
+	//game.data[1] = 2;
+	//while(can_send(&game, 0) == 0);
+	
 	while (1) 
     {
+		set_green_LED;
 		if(IR_detection(300) == 1){
 			while(IR_detection(1500) == 1);
 			game_score = game_score + 1;
 		}
 		
 		
-		if(game_clock >= 6000 && game_ended == 0){ //game time = 1 min
-			game_ended = 1;
+		if(game_clock >= 3000 && game_ended == 0){ //game time = 30 sek
 			
+			game_ended = 1;
 			// Send CAN message
 			game.id = 1;
 			game.data_length = 2;
 			game.data[0] = game_score;
 			game.data[1] = game_ended;
-			while(can_send(&game, 0) == 1);
+			while(can_send(&game, 0) == 0);
+			//printf("score = %d\n", game_score);
+			//printf("Game clock = %d\n", game_clock);
+			//printf("Game ended = %d\n", game_ended);
 		}
-	
-		printf("score = %d\n", game_score);
-		printf("Game clock = %d\n", game_clock);
-		printf("Game ended = %d\n", game_ended);
+	//printf("Game clock = %d\n", game_clock);
+
 
     }
 }

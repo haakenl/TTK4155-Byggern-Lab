@@ -59,6 +59,16 @@ uint8_t SRAM_read(int index){
 	printf("SRAM test completed with \n%4d errors in write phase and \n%4d errors in retrieval phase\n\n", write_errors, retrieval_errors);
 }*/
 
+const char str0sram[] PROGMEM = "Write errors: %d";
+const char str1sram[] PROGMEM = "Retrieval errors: %d";
+
+PGM_P const string_table_sram[] PROGMEM =
+{
+	str0sram, str1sram
+};
+
+char buffer_sram[1];
+
 
 void SRAM_test_OLED_print(void)
 {
@@ -92,15 +102,19 @@ void SRAM_test_OLED_print(void)
 	}
 	
 	_delay_ms(100);
-	char write_errors_print[1];
-	sprintf(write_errors_print, "Write errors: %d", write_errors);
-	char retrieval_errors_print[1];
-	sprintf(retrieval_errors_print, "Retrieval errors: %d", retrieval_errors);
 	
+	char write_errors_print[20];
+	strcpy_P(buffer_sram, (PGM_P)pgm_read_word(&(string_table_sram[0])));
+	sprintf(write_errors_print, buffer_sram, write_errors);
 	OLED_clear_line(1);
-	OLED_clear_line(2);
 	OLED_pos(1,0);
 	OLED_printf(write_errors_print);
+	
+	
+	char retrieval_errors_print[20];
+	strcpy_P(buffer_sram, (PGM_P)pgm_read_word(&(string_table_sram[1])));
+	sprintf(retrieval_errors_print, buffer_sram, retrieval_errors);
+	OLED_clear_line(2);
 	OLED_pos(2,0);
 	OLED_printf(retrieval_errors_print);
 }

@@ -56,6 +56,9 @@ void CAN0_Handler( void )
 			game_clock = message.data[0];
 			game_score = message.data[0];
 			game_ended = message.data[0];
+			//printf("score = %d\n", game_score);
+			//printf("Game clock = %d\n", game_clock);
+			//printf("Game ended = %d\n", game_ended);
 		}
 		if(message.id == 2){
 			if(message.data[0] == 1){

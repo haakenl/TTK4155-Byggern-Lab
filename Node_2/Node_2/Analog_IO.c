@@ -17,11 +17,6 @@ void Analog_IO_init(void){
 	ADC -> ADC_MR = ADC_MR_FREERUN | ADC_MR_PRESCAL(255);		// ADC set to Freerun mode, default single ended mode and prescaler
  	ADC -> ADC_CHER |= ADC_CHER_CH7;		// Enables channel 7
 	ADC -> ADC_CR |= ADC_CR_START;			// Begins analog-to-digital conversion
-	
-	/*Spørr studass om hvordan vi kan bruke adc til å til å trigge et flag isteden for */
-	//ADC -> ADC_IER |= ADC_IER_COMPE;		// Enables channel 7
-	//ADC -> ADC_EMR = ADC_EMR_CMPMODE_LOW| ADC_EMR_CMPSEL(7) | ADC_EMR_CMPFILTER(5); 
-	//ADC -> ADC_CWR = ADC_CWR_LOWTHRES(800); 	
 
 	/* Set up motor DAC (MJEX) */
 	DACC -> DACC_WPMR &= ~ DACC_WPMR_WPEN;	// Disable DAC Write protection 
@@ -33,20 +28,13 @@ void Analog_IO_init(void){
 	DACC -> DACC_CDR = 0;							// Set initial value to zero.
 }
 
-//void ADC_Handler(void){
-//	game_score = game_score + 1;
-//	set_green_LED;
-//}
-
 uint8_t IR_detection(uint16_t threshold){
-	//uint8_t ir_blocked = 0;
 	if(Read_IR_VALUE < threshold){
 		return 1;
 	}
 	return 0;
 }
 			
-
 
 void set_analog_value(uint16_t value){
 	if(value > 4095){
