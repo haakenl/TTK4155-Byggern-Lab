@@ -156,11 +156,23 @@ void GUI_menu_action(int current_page){
 	if(current_child == 29){ 
 		OLED_pos(3, 43);
 		GUI_print_string(42); //Print "HAVE FUN"
-		_delay_ms(500);
+		_delay_ms(200);
+		
+		/*Clear any mail box interrupt flags*/
+		if(test_bit(CAN_int_flag_reg, CAN_int_flag_bit) == 0){
+		CAN_mailbox();
+			if(CAN_mailbox_0_recive_flag == 1){
+				can_message dummy = CAN_message_receive(0);
+			}
+			
+			if(CAN_mailbox_1_recive_flag == 1){
+				can_message dummy = CAN_message_receive(1);
+			}
+		}
 		
 		uint8_t score = 0;
 		uint8_t read_can_flag = 1;
-	
+		
 		game.id = 4;			// New game 
 		game.data_length = 2;
 		game.data[0] = 0;		// reset game score

@@ -33,9 +33,6 @@ int16_t read_encoder(void){
 	sel_LSB_encoder;
 	_delay_us(20);
 	pos_and_direction |= (read_encoder_mask >> 1);
-	//enable_encoder_reset
-	//_delay_us(10);
-	//disable_encoder_reset;
 	disable_encoder;	
 	return pos_and_direction;
 }
