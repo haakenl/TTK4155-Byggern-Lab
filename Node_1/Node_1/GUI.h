@@ -9,7 +9,6 @@
 #ifndef GUI_H_
 #define GUI_H_
 
-#include "config.h"
 #include "can.h"
 
 
