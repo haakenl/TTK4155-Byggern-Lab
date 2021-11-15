@@ -162,11 +162,11 @@ void GUI_menu_action(int current_page){
 		if(test_bit(CAN_int_flag_reg, CAN_int_flag_bit) == 0){
 		CAN_mailbox();
 			if(CAN_mailbox_0_recive_flag == 1){
-				can_message dummy = CAN_message_receive(0);
+				CAN_message_receive(0);
 			}
 			
 			if(CAN_mailbox_1_recive_flag == 1){
-				can_message dummy = CAN_message_receive(1);
+				CAN_message_receive(1);
 			}
 		}
 		
