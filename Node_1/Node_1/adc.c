@@ -30,7 +30,7 @@ adc_pos adc_read(){
 	adc_pos return_pos;
 	volatile uint8_t *ext_ADC = (uint8_t * ) 0x1400; // Start address for the ADC channels	
 	ext_ADC[0] = 0;	
-	//Parralell bus is set up to wait one cycle  //Bør byttes med while og interrupt flag. (busy sig) vis nødvendig
+	//Parralell bus is set up to wait one cycle  //BÃ¸r byttes med while og interrupt flag. (busy sig) vis nÃ¸dvendig
 	return_pos.joy_y = ext_ADC[0];
 	return_pos.joy_x = ext_ADC[0];
 	return_pos.slider_left = ext_ADC[0];
