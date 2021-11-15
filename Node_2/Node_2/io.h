@@ -1,5 +1,5 @@
 /*
- * IO.h
+ * io.h
  *
  * Created: 10/13/2021 1:20:51 PM
  *  Author: HLunn
@@ -32,7 +32,7 @@
 #define enable_motor PIOD -> PIO_SODR |= PIO_SODR_P9;		// Enable motor (Pin6)
 #define disable_motor PIOD -> PIO_CODR |= PIO_SODR_P9;		// disable motor (Pin6)
 #define set_neg_motor_dir PIOD -> PIO_SODR |= PIO_SODR_P10;		// set pos dir motor (Pin7)
-#define set_pos_motor_dir PIOD -> PIO_CODR |= PIO_SODR_P10;		// set neg dir motor (Pin7) Må muligens snus!
+#define set_pos_motor_dir PIOD -> PIO_CODR |= PIO_SODR_P10;		// set neg dir motor (Pin7) MÃ¥ muligens snus!
 
 /* Set up MJ2 */
 #define read_encoder_mask PIOC -> PIO_PDSR & 0x1FE			// read encoder data mask
