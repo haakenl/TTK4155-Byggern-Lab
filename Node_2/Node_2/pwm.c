@@ -1,12 +1,12 @@
 /*
- * PWM.c
+ *pwm.c
  *
  * Created: 20.10.2021 12:33:04
  *  Author: haakenl
  */ 
 
 
-#include "PWM.h"
+#include "pwm.h"
 #include "sam.h"
 
 
