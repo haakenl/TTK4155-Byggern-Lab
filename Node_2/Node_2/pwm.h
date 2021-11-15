@@ -1,5 +1,5 @@
 /*
- * PWM.h
+ * pwm.h
  *
  * Created: 20.10.2021 12:32:38
  *  Author: haakenl
