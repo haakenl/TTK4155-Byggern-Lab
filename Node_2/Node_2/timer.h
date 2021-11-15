@@ -1,5 +1,5 @@
 /*
- * Timer.h
+ * timer.h
  *
  * Created: 27.10.2021 10:10:55
  *  Author: haakenl
