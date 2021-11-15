@@ -159,10 +159,10 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Analog_IO.c">
+    <Compile Include="analog_io.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="Analog_IO.h">
+    <Compile Include="analog_io.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="can\can_controller.c">
@@ -183,10 +183,10 @@
     <Compile Include="Device_Startup\system_sam3xa.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="IO.c">
+    <Compile Include="io.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="IO.h">
+    <Compile Include="io.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="main.c">
@@ -198,16 +198,16 @@
     <Compile Include="motor.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="PWM.c">
+    <Compile Include="pwm.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="PWM.h">
+    <Compile Include="pwm.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="Timer.c">
+    <Compile Include="timer.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="Timer.h">
+    <Compile Include="timer.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="uart_and_printf\printf_stdarg.c">
