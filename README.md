@@ -4,18 +4,19 @@ This repository is the documented software and hardware designed by Håken Sives
 
 Node 1 (ATmega 162) firmware contains:
 
-- USART driver (printf).
+- USART driver (with printf).
 - Parallel bus driver for (SRAM, ADC and OLED controller).
 - Graphical user interface (GUI).
 - SPI driver.
-- CANbus driver. (external MCP2515 CANcontroller is used for this.)
+- CANbus driver. (external MCP2515 CANcontroller.)
 
 Node 2 (ATSAM3X8E) firmware contains:
 
 - USART driver and printf (code provided by NTNU).
-- CANbus driver (code provided by NTNU).
+- CANbus driver (code provided by NTNU, with small adjustments by us).
 - PWM driver.
-- PI-controller.
+- Timers.
+- PI-controlled motor driver.
 
 
 please feel free to use and learn from our mistakes in this project.
