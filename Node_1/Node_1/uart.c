@@ -33,7 +33,7 @@ void uart_init(){
 	//stop bit, set frame format 8bit packages
 	// USBS0 : Stop bit register
 	// UCSZ00 set 8 bit format
-	UCSR0C = (1<<URSEL0)|(1 << USBS0) | (3 << UCSZ00);
+	UCSR0C = (1<<URSEL0)|(1 << USBS0)|(3 << UCSZ00);
 	
 	// Enable Transmitter and Receiver
 	UCSR0B = (1<<TXEN0)|(1<<RXEN0);
