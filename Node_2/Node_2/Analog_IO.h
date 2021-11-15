@@ -11,13 +11,12 @@
 
 #include "sam.h"
 
-
 #define Read_IR_VALUE ADC -> ADC_CDR[7]
 #define Read_IR_LAST_VALUE ADC ->ADC_LCDR 
 
 
-void Analog_IO_init(void);
-uint8_t IR_detection(uint16_t threshold);
+void analog_io_init(void);
+uint8_t ir_detection(uint16_t threshold);
 void set_analog_value(uint16_t value);
 
 

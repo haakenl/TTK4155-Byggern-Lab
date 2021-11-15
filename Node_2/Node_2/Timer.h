@@ -10,10 +10,8 @@
 #define TIMER_H_
 
 #include "sam.h"
-#include "IO.h"
-#include "motor.h"
 
-void Timer_init(void);
+void timer_init(void);
 void _delay_ms(uint32_t ms);
 void _delay_us(uint32_t us);
 

@@ -5,16 +5,16 @@
  * Author : HLunn
  */ 
 
-#include <stdio.h>
-#include <stdarg.h>
+//#include <stdio.h>
+//#include <stdarg.h>
 #include "sam.h"
 #include "uart_and_printf/uart.h"
 #include "uart_and_printf/printf_stdarg.h"
 #include "can/can_controller.h"
-#include "IO.h"
-#include "Analog_IO.h"
-#include "PWM.h"
-#include "Timer.h"
+#include "io.h"
+#include "analog_io.h"
+#include "pwm.h"
+#include "timer.h"
 #include "motor.h"
 
 
@@ -29,11 +29,11 @@ int main(void)
 		
 	configure_uart();
 	can_init_def_tx_rx_mb(0x00290165);		//see can config sheet on github
-	IO_Init();
-	Analog_IO_init();
-	PWM_init();
+	io_init();
+	analog_io_init();
+	pwm_init();
 	motor_init();
-	Timer_init();
+	timer_init();
 	
 	
 	printf("Welcome PuTTY's\n\r");
@@ -52,8 +52,8 @@ int main(void)
 	while (1) 
     {
 		set_green_LED;
-		if(IR_detection(300) == 1){
-			while(IR_detection(1500) == 1);
+		if(ir_detection(300) == 1){
+			while(ir_detection(1500) == 1);
 			game_score = game_score + 1;
 		}
 		

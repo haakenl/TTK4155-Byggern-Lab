@@ -4,20 +4,26 @@
  * Created: 01.09.2021 17:15:36
  *  Author: haakenl
  */ 
+#define F_CPU 4915200
+#define BAUD 9600
+#define UBRR F_CPU/16/BAUD-1
 
-#include "UART.h"
+#include <avr/io.h>
+#include <stdio.h>
 
-void UART_transmit(unsigned char data){
+#include "uart.h"
+
+void uart_transmit(unsigned char data){
 	loop_until_bit_is_set(UCSR0A, UDRE0);
 	UDR0 = data;
 }
 
-unsigned char UART_receive(void){
+unsigned char uart_receive(void){
 	loop_until_bit_is_set(UCSR0A, RXC0);
 	return UDR0;
 }
 
-void UART_init(){
+void uart_init(){
 	
 	// UBRR : USART Baud rate register
 	unsigned int ubrr = UBRR;
@@ -32,5 +38,5 @@ void UART_init(){
 	// Enable Transmitter and Receiver
 	UCSR0B = (1<<TXEN0)|(1<<RXEN0);
 	
-	fdevopen(UART_transmit, UART_receive);
+	fdevopen(uart_transmit, uart_receive);
 }

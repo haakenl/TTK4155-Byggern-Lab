@@ -5,10 +5,11 @@
  *  Author: haakenl
  */ 
 
-#include "Analog_IO.h"
-#include "Timer.h"
+#include "analog_io.h"
+#include "timer.h"
 
-void Analog_IO_init(void){
+
+void analog_io_init(void){
 	/* Set up IR detection ADC */
 	ADC -> ADC_WPMR &= ~ADC_WPMR_WPEN;		// Disable ADC Write protection 
 	PMC -> PMC_PCER1 |= PMC_PCER1_PID37;	// Enable peripheral clock for ADC
@@ -28,7 +29,7 @@ void Analog_IO_init(void){
 	DACC -> DACC_CDR = 0;							// Set initial value to zero.
 }
 
-uint8_t IR_detection(uint16_t threshold){
+uint8_t ir_detection(uint16_t threshold){
 	if(Read_IR_VALUE < threshold){
 		return 1;
 	}

@@ -5,9 +5,14 @@
  *  Author: haakenl
  */ 
 
-#include "ADC.h"
+#define F_CPU 4915200
+#include <util/delay.h>
+#include <stdlib.h>
 
-void ADC_init(){
+#include "adc.h"
+#include "io.h"
+
+void adc_init(){
 	// Set timer/counter0 to PD0 (2.5MHz clock to ADC)
 	set_bit(DDRB, PB0); // Set PB0 as output
 	set_bit(TCCR0,WGM01); // Set CTC Mode
@@ -21,8 +26,8 @@ void ADC_init(){
 }	
 
 // Should read current position values for joystick with values from 0-255
-ADC_pos ADC_read(){
-	ADC_pos return_pos;
+adc_pos adc_read(){
+	adc_pos return_pos;
 	volatile uint8_t *ext_ADC = (uint8_t * ) 0x1400; // Start address for the ADC channels	
 	ext_ADC[0] = 0;	
 	//Parralell bus is set up to wait one cycle  //Bør byttes med while og interrupt flag. (busy sig) vis nødvendig
@@ -35,12 +40,12 @@ ADC_pos ADC_read(){
 }
 
 void joystick_calibrate(){
-	ADC_pos pos = ADC_read(); //Dummy read
-	double AVG_joy_x;
-	double AVG_joy_y;
+	adc_pos pos = adc_read(); //Dummy read
+	double AVG_joy_x = 0;
+	double AVG_joy_y = 0;
 	
 	for(int i = 0; i<10; i++) {	
-		pos = ADC_read();
+		pos = adc_read();
 		AVG_joy_x = AVG_joy_x + pos.joy_x; 
 		AVG_joy_y = AVG_joy_y + pos.joy_y;
 	}
@@ -50,8 +55,8 @@ void joystick_calibrate(){
 }
 
 /* Determine the location of the joystick based on its distance from the center */
-ADC_direction joystick_direction(){
-	ADC_pos pos = ADC_read();
+adc_direction joystick_direction(){
+	adc_pos pos = adc_read();
 	
 
 	int x = pos.joy_x;
@@ -79,9 +84,9 @@ ADC_direction joystick_direction(){
 }
 
 
-ADC_direction debounce_joystick_direction(){
-		ADC_direction current_direction;
-		ADC_direction debounce_direction;
+adc_direction debounce_joystick_direction(){
+		adc_direction current_direction;
+		adc_direction debounce_direction;
 		
 		current_direction = joystick_direction();
 		_delay_ms(100);
@@ -95,6 +100,6 @@ ADC_direction debounce_joystick_direction(){
 		}		
 }
 
-unsigned int ADC_to_prosent(unsigned int value){
+unsigned int adc_to_prosent(unsigned int value){
 	return value*100/255;
 }

@@ -9,18 +9,11 @@
 #ifndef SPI_H_
 #define SPI_H_
 
-#include "config.h"
-
-#define SPI_CAN_SS PINB4
-#define SPI_MOSI PINB5
-#define SPI_MISO PINB6
-#define SPI_SCK PINB7
-
-void SPI_MasterInit(void);
-void SPI_transmit(char cData);
-char SPI_recive(void);
-void SPI_enslaved_CAN(void);
-void SPI_release_CAN(void);
+void spi_master_init(void);
+void spi_transmit(char cData);
+char spi_recive(void);
+void spi_enslaved_can(void);
+void spi_release_can(void);
 
 
 #endif /* SPI_H_ */

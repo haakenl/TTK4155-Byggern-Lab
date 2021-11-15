@@ -6,6 +6,10 @@
  */ 
 
 #include "motor.h"
+#include "timer.h"
+#include "io.h"
+#include "analog_io.h"
+#include "stdlib.h"
 
 void motor_init(void){
 	enable_motor;
@@ -17,9 +21,9 @@ void motor_init(void){
 	_delay_ms(1000);	
 	encoder_range = read_encoder();
 	set_motor_speed(0);	
-	PID.pos_ref = encoder_range/2;
-	PID.Kp = 0.35;
-	PID.Ki = PID.Kp/40; 
+	pid.pos_ref = encoder_range/2;
+	pid.kp = 0.35;
+	pid.ki = pid.kp/40; 
 			
 	}
 	
@@ -63,38 +67,38 @@ void update_pos_ref(int16_t ref_pos){
 	if (ref_pos < 38){
 		ref_pos = 38;
 	}
-	PID.pos_ref = (encoder_range/2)-(ref_pos-115)*100;
+	pid.pos_ref = (encoder_range/2)-(ref_pos-115)*100;
 }
 
 
-void PID_regulator(void){
-	PID.pos = read_encoder();
+void pid_regulator(void){
+	pid.pos = read_encoder();
 		
-	if (PID.pos < 0){
-		PID.pos = 0;
+	if (pid.pos < 0){
+		pid.pos = 0;
 	}
-	if(PID.pos > encoder_range){
-		PID.pos = encoder_range; 
-	}
-	
-	if(PID.pos_ref < 0){
-		PID.pos_ref = 0;
+	if(pid.pos > encoder_range){
+		pid.pos = encoder_range; 
 	}
 	
-	if(PID.pos_ref > encoder_range){
-		PID.pos_ref = encoder_range; 
+	if(pid.pos_ref < 0){
+		pid.pos_ref = 0;
 	}
 	
-	PID.error = PID.pos_ref - PID.pos;
+	if(pid.pos_ref > encoder_range){
+		pid.pos_ref = encoder_range; 
+	}
 	
-	if(abs(PID.error) < 500){
-		PID.error_i = 0;
+	pid.error = pid.pos_ref - pid.pos;
+	
+	if(abs(pid.error) < 500){
+		pid.error_i = 0;
 	}
 	else{
-		PID.error_i = PID.error_i + PID.error;
+		pid.error_i = pid.error_i + pid.error;
 	}
 	
-	PID.output = PID.error*PID.Kp + PID.error_i*PID.Ki;
+	pid.output = pid.error*pid.kp + pid.error_i*pid.ki;
 	
-	set_motor_speed((int16_t)PID.output);
+	set_motor_speed((int16_t)pid.output);
 }

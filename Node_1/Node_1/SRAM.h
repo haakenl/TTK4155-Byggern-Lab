@@ -9,14 +9,13 @@
 #ifndef SRAM_H_
 #define SRAM_H_
 
-#include "config.h"
-#include "OLED.h"
+#include <avr/io.h>
+#include <stdint.h>
 
-
-void SRAM_init();
-void SRAM_write(uint8_t data, int index);
-uint8_t SRAM_read(int index);
-void SRAM_test(void);
-void SRAM_test_OLED_print(void);
+void sram_init();
+void sram_write(uint8_t data, int index);
+uint8_t sram_read(int index);
+void sram_test(void);
+void sram_test_OLED_print(void);
 
 #endif /* SRAM_H_ */

@@ -5,48 +5,42 @@
  * Author : haakenl
  */
 
-#include "config.h"
-#include "UART.h"
-#include "SRAM.h"
-#include "ADC.h"
-#include "OLED.h"
-#include "GUI.h"
-#include "SPI.h"
-#include "CAN.h"
+#define F_CPU 4915200
+#include <avr/io.h>
+#include <util/delay.h>
 
+#include "io.h"
+#include "uart.h"
+#include "sram.h"
+#include "adc.h"
+#include "oled.h"
+#include "gui.h"
+#include "spi.h"
+#include "can.h"
+
+uint8_t errorflag;
 
 
 int main(void)
-{
-	/*Indicator LED setup*/
-	set_bit(LED_reg, LED_error);
-	set_bit(LED_reg, LED_normal);
+{	
+	_delay_ms(1000); //Wait for OLED controller to turn on.	
 	
-	/* Turn on set LEDS in normal "mode" */
-	clear_bit(LED_port, LED_normal);
-	set_bit(LED_port, LED_error);
-	
-	/* Enable internal pull-up on PB1 (joystick) */
-	set_bit(Button_port, Button_joy_port_bit);
-	set_bit(SPI_ext_port, SPI_SS_bit);
-		
 	/* Execute init's*/	
-	_delay_ms(1000); //Wait for OLED controller to turn on.
-	UART_init();
-	SRAM_init();
-	ADC_init();
-	OLED_init();
-	GUI_init();
-	SPI_MasterInit();
-	//CAN_init();
-	errorflag = CAN_init();
+	io_init();
+	uart_init();
+	sram_init();
+	adc_init();
+	oled_init();
+	gui_init();
+	spi_master_init();
+	errorflag = can_init();
 	
 	
 	/* Print menu */
-	GUI_print_menu(current_menu);
-	GUI_print_arrow(0);
+	gui_print_menu(current_menu);
+	gui_print_arrow(0);
 	
-	can_message test_control;
+	//can_message test_control;
 	
 	while(1){
 		/*
@@ -89,10 +83,10 @@ int main(void)
 		//}
 			
 		if(errorflag == 1){
-			set_bit(LED_port, LED_normal);
-			clear_bit(LED_port, LED_error);
+			set_bit(led_port, led_normal);
+			clear_bit(led_port, led_error);
 		}
-		GUI_menu();
+		gui_menu();
 
 		
 	}

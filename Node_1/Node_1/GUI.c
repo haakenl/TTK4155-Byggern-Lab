@@ -5,9 +5,18 @@
  *  Author: haakenl
  */ 
 
+#define F_CPU 4915200
+#include <util/delay.h>
+#include <avr/pgmspace.h>
+#include <stdio.h>
 
-
-#include "GUI.h"
+#include "gui.h"
+#include "oled.h"
+#include "adc.h"
+#include "sram.h"
+#include "uart.h"
+#include "io.h"
+#include "spi.h"
 
 /* Strings stored in program memory to save progmem:
 https://www.nongnu.org/avr-libc/user-manual/pgmspace.html*/
@@ -89,7 +98,7 @@ char buffer[1];
 		menu_t main_menu = {28, 4, NULL, {&new_game, &high_score, &clear_high_score, &settings}};
 	menu_t* current_menu;
 
-void GUI_init(){
+void gui_init(){
 			
 			SPI_loopback.parent = &settings;
 			RS232_loopback.parent = &settings;
@@ -107,66 +116,66 @@ void GUI_init(){
 	current_menu = &main_menu;
 }
 
-void GUI_print_menu(menu_t* print_menu){
-	OLED_clear_all();
+void gui_print_menu(menu_t* print_menu){
+	oled_clear_all();
 	for(int i=0; i<print_menu->number_of_childs; i++) {
-		OLED_pos(i, 15);
+		oled_pos(i, 15);
 		strcpy_P(buffer, (PGM_P)pgm_read_word(&(string_table[(print_menu->children[i])->name])));
-		OLED_printf(buffer);
+		oled_printf(buffer);
 	}
 }
 
-void GUI_print_string(uint16_t i){
+void gui_print_string(uint16_t i){
 	strcpy_P(buffer, (PGM_P)pgm_read_word(&(string_table[i])));
-	OLED_printf(buffer); 
+	oled_printf(buffer); 
 }
 
-void GUI_print_arrow(int page){
-		OLED_clear_arrow();
-		OLED_pos(page, 0);
-		OLED_printf("->");
+void gui_print_arrow(int page){
+		oled_clear_arrow();
+		oled_pos(page, 0);
+		oled_printf("->");
 }
 
-int GUI_menu_down(int current_page){
+int gui_menu_down(int current_page){
 	current_menu = current_menu->children[current_page];
 	current_page = 0;
-	OLED_pos(0,0);
-	GUI_print_menu(current_menu);
-	OLED_pos(0,0);
-	GUI_print_arrow(current_page);
+	oled_pos(0,0);
+	gui_print_menu(current_menu);
+	oled_pos(0,0);
+	gui_print_arrow(current_page);
 	return current_page;
 }
 
-int GUI_menu_up(int current_page){
+int gui_menu_up(int current_page){
 	current_menu = current_menu->parent;
 	current_page = 0;
-	OLED_pos(0,0);
-	GUI_print_menu(current_menu);
-	OLED_pos(0,0);
-	GUI_print_arrow(current_page);
+	oled_pos(0,0);
+	gui_print_menu(current_menu);
+	oled_pos(0,0);
+	gui_print_arrow(current_page);
 	return current_page;
 }
 
-void GUI_menu_action(int current_page){
-	ADC_direction current_direction;
+void gui_menu_action(int current_page){
+	adc_direction current_direction;
 	uint8_t  current_child;
 	current_child = current_menu->name;
 	
 	/* New game */
 	if(current_child == 29){ 
-		OLED_pos(3, 43);
-		GUI_print_string(42); //Print "HAVE FUN"
+		oled_pos(3, 43);
+		gui_print_string(42); //Print "HAVE FUN"
 		_delay_ms(200);
 		
 		/*Clear any mail box interrupt flags*/
-		if(test_bit(CAN_int_flag_reg, CAN_int_flag_bit) == 0){
-		CAN_mailbox();
-			if(CAN_mailbox_0_recive_flag == 1){
-				CAN_message_receive(0);
+		if(test_bit(can_int_flag_reg, can_int_flag_bit) == 0){
+		can_mailbox();
+			if(can_mailbox_0_recive_flag == 1){
+				can_message_receive(0);
 			}
 			
-			if(CAN_mailbox_1_recive_flag == 1){
-				CAN_message_receive(1);
+			if(can_mailbox_1_recive_flag == 1){
+				can_message_receive(1);
 			}
 		}
 		
@@ -177,49 +186,49 @@ void GUI_menu_action(int current_page){
 		game.data_length = 2;
 		game.data[0] = 0;		// reset game score
 		game.data[1] = 0;		// reset and game clock
-		CAN_message_send(&game);
+		can_message_send(&game);
 		
 		uint8_t stop_transmitting_ADC_values = 0;
 		while(stop_transmitting_ADC_values == 0){
 			/* Shoot! */
 			if(!(test_bit(PINB, PINB1))){
-				Button_to_node2.id = 2;
-				Button_to_node2.data_length = 1;
-				Button_to_node2.data[0] = 1;
-				CAN_message_send(&Button_to_node2);
+				button_to_node2.id = 2;
+				button_to_node2.data_length = 1;
+				button_to_node2.data[0] = 1;
+				can_message_send(&button_to_node2);
 				_delay_ms(50);
-				while(!test_bit(Button_pin, Button_joy_bit));
-				Button_to_node2.id = 2;
-				Button_to_node2.data_length = 1;
-				Button_to_node2.data[0] = 0;
-				CAN_message_send(&Button_to_node2);
+				while(!test_bit(button_pin, button_joy_bit));
+				button_to_node2.id = 2;
+				button_to_node2.data_length = 1;
+				button_to_node2.data[0] = 0;
+				can_message_send(&button_to_node2);
 			}
 			/* Update ADC pos */
-			ADC_pos adc_pos = ADC_read();
+			adc_pos adc_pos = adc_read();
 			ADC_to_node2.id = 3;
 			ADC_to_node2.data_length = 2;
 			ADC_to_node2.data[0] = adc_pos.joy_x ;
 			ADC_to_node2.data[1] = adc_pos.joy_y; 			
-			CAN_message_send(&ADC_to_node2);
+			can_message_send(&ADC_to_node2);
 			/* Wait 16ms this gives ~60 ADC updates per seconded (same update frequency as digitizer on smart phones) */
 			_delay_ms(16);
 		
-			read_can_flag = test_bit(CAN_int_flag_reg, CAN_int_flag_bit);
+			read_can_flag = test_bit(can_int_flag_reg, can_int_flag_bit);
 			if(read_can_flag == 0){
 				printf("flag \n");
-				CAN_mailbox();
-				if(CAN_mailbox_0_recive_flag == 1){
+				can_mailbox();
+				if(can_mailbox_0_recive_flag == 1){
 					printf("mail 0 \n");
-					game_ended = CAN_message_receive(0);
+					game_ended = can_message_receive(0);
 					printf("mail 0 id %d\n", game_ended.id);
 					if (game_ended.id  == 1){
 						score = game_ended.data[0];
 						stop_transmitting_ADC_values = game_ended.data[1];
 					}
 				}
-				if(CAN_mailbox_1_recive_flag == 1){
+				if(can_mailbox_1_recive_flag == 1){
 					printf("mail 0 \n");
-					game_ended = CAN_message_receive(1);
+					game_ended = can_message_receive(1);
 					printf("mail 1 id %d\n", game_ended.id);
 					if (game_ended.id  == 1){
 						score = game_ended.data[0];
@@ -229,14 +238,14 @@ void GUI_menu_action(int current_page){
 			}
 		}
 			
-		OLED_clear_all();
+		oled_clear_all();
 		char score_print[20];
 		strcpy_P(buffer, (PGM_P)pgm_read_word(&(string_table[40])));
 		sprintf(score_print, buffer, score);
-		OLED_pos(3, 40);
-		OLED_printf(score_print);
-		OLED_pos(7, 0);
-		GUI_print_string(7); //Print "Move joy left to exit"
+		oled_pos(3, 40);
+		oled_printf(score_print);
+		oled_pos(7, 0);
+		gui_print_string(7); //Print "Move joy left to exit"
 		current_direction = debounce_joystick_direction();
 		while(current_direction != LEFT){
 			current_direction = debounce_joystick_direction();
@@ -246,24 +255,24 @@ void GUI_menu_action(int current_page){
 	
 	/* High Score */
 	else if(current_child == 30){ 
-			OLED_pos(3, 24);
-			GUI_print_string(0); //Print "high score here"
+			oled_pos(3, 24);
+			gui_print_string(0); //Print "high score here"
 			_delay_ms(2000);		
 	}
 	
 	/* Clear High Score */
 	else if(current_child == 31){ 
-			OLED_pos(3, 19);
-			GUI_print_string(1); //Print "High Score Cleared"
+			oled_pos(3, 19);
+			gui_print_string(1); //Print "High Score Cleared"
 			_delay_ms(2000);
 	}
 	
 	/* Auto Calibrate Joy */
 	else if(current_child == 33){ 
-			OLED_pos(3, 14);
-			GUI_print_string(2); //Print "Calibrating Joystick" 
-			OLED_pos(4, 34);
-			GUI_print_string(3); //Print "DO NOT TOUCH"
+			oled_pos(3, 14);
+			gui_print_string(2); //Print "Calibrating Joystick" 
+			oled_pos(4, 34);
+			gui_print_string(3); //Print "DO NOT TOUCH"
 			_delay_ms(2000);
 			joystick_calibrate();
 			_delay_ms(2000);
@@ -272,14 +281,14 @@ void GUI_menu_action(int current_page){
 	/* Adjust Joy Deadband */
 	else if(current_child == 34){ 
 		char joy_deadband_value[15];
-		OLED_pos(0, 0);
-		GUI_print_string(4); //Print "Adjust Joy Deadband"
-		OLED_pos(1, 0);
-		GUI_print_string(5); //Print "Move joy up to increase"
-		OLED_pos(2, 0);
-		GUI_print_string(6); //Print "Move joy down to decrease"
-		OLED_pos(7, 0);
-		GUI_print_string(7); //Print Move joy left to exit"
+		oled_pos(0, 0);
+		gui_print_string(4); //Print "Adjust Joy Deadband"
+		oled_pos(1, 0);
+		gui_print_string(5); //Print "Move joy up to increase"
+		oled_pos(2, 0);
+		gui_print_string(6); //Print "Move joy down to decrease"
+		oled_pos(7, 0);
+		gui_print_string(7); //Print Move joy left to exit"
 		current_direction = debounce_joystick_direction();
 		while(current_direction != LEFT){
 			current_direction = debounce_joystick_direction();
@@ -291,56 +300,56 @@ void GUI_menu_action(int current_page){
 			}		
 			strcpy_P(buffer, (PGM_P)pgm_read_word(&(string_table[41])));
 			sprintf(joy_deadband_value, buffer, joy_deadband);
-			OLED_clear_line(4);
-			OLED_printf(joy_deadband_value);
+			oled_clear_line(4);
+			oled_printf(joy_deadband_value);
 		}
 		_delay_ms(200);
 	}
 	
 	/* ADC test */
 	else if(current_child == 35){
-		OLED_pos(0, 30); 
-		GUI_print_string(8); //Print "0     Value     255"
-		OLED_pos(1, 1);
-		GUI_print_string(9); //Print "Ch 0"
-		OLED_pos(2, 1);
-		GUI_print_string(10); //Print "Ch 1"
-		OLED_pos(3, 1);
-		GUI_print_string(11); //Print "CH 2"
-		OLED_pos(4, 1);
-		GUI_print_string(12); //Print "CH 3"
-		OLED_pos(6, 25);
-		GUI_print_string(13); //Print "Joy    Left    Right"
-		OLED_pos(7, 0);
-		GUI_print_string(14); //Print "Exit with left + right;
+		oled_pos(0, 30); 
+		gui_print_string(8); //Print "0     Value     255"
+		oled_pos(1, 1);
+		gui_print_string(9); //Print "Ch 0"
+		oled_pos(2, 1);
+		gui_print_string(10); //Print "Ch 1"
+		oled_pos(3, 1);
+		gui_print_string(11); //Print "CH 2"
+		oled_pos(4, 1);
+		gui_print_string(12); //Print "CH 3"
+		oled_pos(6, 25);
+		gui_print_string(13); //Print "Joy    Left    Right"
+		oled_pos(7, 0);
+		gui_print_string(14); //Print "Exit with left + right;
 		
-		ADC_pos pos = ADC_read();
-		while(!test_bit(Button_pin, Button_left_bit) || !test_bit(Button_pin, Button_rigth_bit)){
-			pos = ADC_read();
-			OLED_clear_line_from(1, 30);
-			OLED_pos(1, (30+pos.joy_y/2.7));
-			OLED_printf("|");
-			OLED_clear_line_from(2, 30);
-			OLED_pos(2, (30+pos.joy_x/2.7));
-			OLED_printf("|");
-			OLED_clear_line_from(3, 30);
-			OLED_pos(3, (30+pos.slider_left/2.7));
-			OLED_printf("|");
-			OLED_clear_line_from(4, 30);
-			OLED_pos(4, (30+pos.slider_right/2.7));
-			OLED_printf("|");
-			OLED_clear_line_from(5, 30);
-			if(!test_bit(Button_pin, Button_joy_bit)){
-				OLED_pos(5,30);
-				OLED_printf("*");
+		adc_pos pos = adc_read();
+		while(!test_bit(button_pin, button_left_bit) || !test_bit(button_pin, button_rigth_bit)){
+			pos = adc_read();
+			oled_clear_line_from(1, 30);
+			oled_pos(1, (30+pos.joy_y/2.7));
+			oled_printf("|");
+			oled_clear_line_from(2, 30);
+			oled_pos(2, (30+pos.joy_x/2.7));
+			oled_printf("|");
+			oled_clear_line_from(3, 30);
+			oled_pos(3, (30+pos.slider_left/2.7));
+			oled_printf("|");
+			oled_clear_line_from(4, 30);
+			oled_pos(4, (30+pos.slider_right/2.7));
+			oled_printf("|");
+			oled_clear_line_from(5, 30);
+			if(!test_bit(button_pin, button_joy_bit)){
+				oled_pos(5,30);
+				oled_printf("*");
 			}
-			if(test_bit(Button_pin, Button_left_bit)){
-				OLED_pos(5,67);
-				OLED_printf("*");
+			if(test_bit(button_pin, button_left_bit)){
+				oled_pos(5,67);
+				oled_printf("*");
 			}
-			if(test_bit(Button_pin, Button_rigth_bit)){
-				OLED_pos(5,110);
-				OLED_printf("*");
+			if(test_bit(button_pin, button_rigth_bit)){
+				oled_pos(5,110);
+				oled_printf("*");
 			}
 			_delay_ms(50);
 		}
@@ -349,7 +358,7 @@ void GUI_menu_action(int current_page){
 	
 	/* OLED test */
 	else if(current_child == 36){
-		OLED_fill_all();
+		oled_fill_all();
 		_delay_ms(100);
 		current_direction = debounce_joystick_direction();
 		while(current_direction != LEFT){
@@ -360,26 +369,26 @@ void GUI_menu_action(int current_page){
 	
 	/* SRAM test */
 	else if(current_child == 37){
-		OLED_pos(0, 0);
-		GUI_print_string(15); //Print "SRAM test");
-		OLED_pos(1, 0);
-		GUI_print_string(16); //Print "NB! all data is deleted"
-		OLED_pos(6, 0);
-		GUI_print_string(17); //Print "Move joy right to confirm"
-		OLED_pos(7, 0);
-		GUI_print_string(7); //Print Move joy left to exit"
+		oled_pos(0, 0);
+		gui_print_string(15); //Print "SRAM test");
+		oled_pos(1, 0);
+		gui_print_string(16); //Print "NB! all data is deleted"
+		oled_pos(6, 0);
+		gui_print_string(17); //Print "Move joy right to confirm"
+		oled_pos(7, 0);
+		gui_print_string(7); //Print Move joy left to exit"
 		current_direction = debounce_joystick_direction();
 		while(current_direction != LEFT){
 			current_direction = debounce_joystick_direction();
 			if(current_direction == RIGHT){
-				OLED_clear_line(1);
-				OLED_clear_line(6);
-				OLED_clear_line(0);
-				GUI_print_string(18); //Print "Starting SRAM test..."
-				SRAM_test_OLED_print(); 
-				OLED_clear_line(0);
-				OLED_pos(0,0);
-				GUI_print_string(19); //Print "SRAM Finished..."
+				oled_clear_line(1);
+				oled_clear_line(6);
+				oled_clear_line(0);
+				gui_print_string(18); //Print "Starting SRAM test..."
+				sram_test_OLED_print(); 
+				oled_clear_line(0);
+				oled_pos(0,0);
+				gui_print_string(19); //Print "SRAM Finished..."
 				current_direction = debounce_joystick_direction();
 				while(current_direction != LEFT){
 					current_direction = debounce_joystick_direction();
@@ -391,23 +400,23 @@ void GUI_menu_action(int current_page){
 	
 	/* RS-232 loop back */
 	else if(current_child == 38){ 
-		OLED_pos(0, 0);
-		GUI_print_string(20); //Print "RS-232 config:"
-		OLED_pos(1, 0);
-		GUI_print_string(21); //Print "- Loop back mode"
-		OLED_pos(2, 0);
-		GUI_print_string(22); //Print "- Baud 9600"
-		OLED_pos(3, 0);
-		GUI_print_string(23); //Print "- 8 Data bits"
-		OLED_pos(4, 0);
-		GUI_print_string(24); //Print "- 2 Stop bits"
-		OLED_pos(7, 0);
-		GUI_print_string(7); //Print Move joy left to exit"
+		oled_pos(0, 0);
+		gui_print_string(20); //Print "RS-232 config:"
+		oled_pos(1, 0);
+		gui_print_string(21); //Print "- Loop back mode"
+		oled_pos(2, 0);
+		gui_print_string(22); //Print "- Baud 9600"
+		oled_pos(3, 0);
+		gui_print_string(23); //Print "- 8 Data bits"
+		oled_pos(4, 0);
+		gui_print_string(24); //Print "- 2 Stop bits"
+		oled_pos(7, 0);
+		gui_print_string(7); //Print Move joy left to exit"
 		current_direction = debounce_joystick_direction();
 		while(current_direction != LEFT){
 			current_direction = debounce_joystick_direction();
 			if(test_bit(UCSR0A, RXC0)){
-				UART_transmit(UDR0);
+				uart_transmit(UDR0);
 			}
 		}
 	_delay_ms(200);
@@ -415,31 +424,31 @@ void GUI_menu_action(int current_page){
 	
 	/* SPI loop back */
 	else if(current_child == 39){ 
-		OLED_pos(0, 0);
-		GUI_print_string(25); //Print "'External' SPI config:");
-		OLED_pos(1, 0);
-		GUI_print_string(21); //Print "- Loop back mode");
-		OLED_pos(2, 0);
-		GUI_print_string(26); //Print "- Slave");
-		OLED_pos(3, 0);
-		GUI_print_string(27); //Print "- SS high");
-		OLED_pos(7, 0);
-		GUI_print_string(7); //Print Move joy left to exit"
+		oled_pos(0, 0);
+		gui_print_string(25); //Print "'External' SPI config:");
+		oled_pos(1, 0);
+		gui_print_string(21); //Print "- Loop back mode");
+		oled_pos(2, 0);
+		gui_print_string(26); //Print "- Slave");
+		oled_pos(3, 0);
+		gui_print_string(27); //Print "- SS high");
+		oled_pos(7, 0);
+		gui_print_string(7); //Print Move joy left to exit"
 		current_direction = debounce_joystick_direction();
 		while(current_direction != LEFT){
 			current_direction = debounce_joystick_direction();
-			if(test_bit(SPI_ext_reg, SPI_SS_bit)){
-				SPI_transmit(SPI_recive());
+			if(test_bit(spi_ext_reg, spi_ss_bit)){
+				spi_transmit(spi_recive());
 			}
 		}
 	_delay_ms(200);
 	}
 }
 
-void GUI_menu(){
-	static ADC_direction previous_direction = NEUTRAL;
+void gui_menu(){
+	static adc_direction previous_direction = NEUTRAL;
 	static int current_page = 0;
-	ADC_direction current_direction;
+	adc_direction current_direction;
 	 		
 	current_direction = debounce_joystick_direction();
 	if (current_direction != previous_direction){
@@ -451,7 +460,7 @@ void GUI_menu(){
 				else {
 				current_page = (current_menu->number_of_childs)-1;
 				} 
-				GUI_print_arrow(current_page);
+				gui_print_arrow(current_page);
 			break;
 		
 			case DOWN:
@@ -461,20 +470,20 @@ void GUI_menu(){
 				else {
 					current_page = 0;
 				}
-				GUI_print_arrow(current_page);	
+				gui_print_arrow(current_page);	
 			break;
 		
 			case RIGHT:
-				current_page = GUI_menu_down(current_page);
+				current_page = gui_menu_down(current_page);
 				if(current_menu->number_of_childs == 0){
-					OLED_clear_all();
-					GUI_menu_action(current_page);
-					current_page = GUI_menu_up(current_page);
+					oled_clear_all();
+					gui_menu_action(current_page);
+					current_page = gui_menu_up(current_page);
 				}
 			break;
 		
 			case LEFT:
-				current_page = GUI_menu_up(current_page);	
+				current_page = gui_menu_up(current_page);	
 			break;
 			
 			case NEUTRAL:

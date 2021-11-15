@@ -5,9 +5,9 @@
  *  Author: HLunn
  */ 
 
-#include "IO.h"
+#include "io.h"
 
-void IO_Init(void){
+void io_init(void){
 	
 	/* Set up LEDS */
 	PIOA -> PIO_WPMR &= ~PIO_WPMR_WPEN;	// Disable IO Write protection PIOA
@@ -59,29 +59,5 @@ void IO_Init(void){
 	// Define Pin 1 to 8 on port C as input
 	PIOC -> PIO_PER |= 0x1FE;
 	PIOC -> PIO_ODR |= 0x1FE;
-	
-	//PIOC -> PIO_PER |= PIO_PER_P1;		// PIO enable (D0 (Pin3))
-	//PIOC -> PIO_ODR |= PIO_ODR_P1;		// P1 Configured disabled as output
-	//// Define Pin 2 on port C as input
-	//PIOC -> PIO_PER |= PIO_PER_P2;		// PIO enable (D1 (Pin4))
-	//PIOC -> PIO_ODR |= PIO_ODR_P2;		// P1 Configured disabled as output
-	//// Define Pin 3 on port C as input
-	//PIOC -> PIO_PER |= PIO_PER_P3;		// PIO enable (D2 (Pin5))
-	//PIOC -> PIO_ODR |= PIO_ODR_P3;		// P1 Configured disabled as output
-	//// Define Pin 4 on port C as input
-	//PIOC -> PIO_PER |= PIO_PER_P4;		// PIO enable (D3 (Pin6))
-	//PIOC -> PIO_ODR |= PIO_ODR_P4;		// P1 Configured disabled as output
-	//// Define Pin 5 on port C as input
-	//PIOC -> PIO_PER |= PIO_PER_P5;		// PIO enable (D4 (Pin7))
-	//PIOC -> PIO_ODR |= PIO_ODR_P5;		// P1 Configured disabled as output 
-	//// Define Pin 6 on port C as input
-	//PIOC -> PIO_PER |= PIO_PER_P6;		// PIO enable (D5 (Pin8))
-	//PIOC -> PIO_ODR |= PIO_ODR_P6;		// P1 Configured disabled as output 
-	//// Define Pin 7 on port C as input
-	//PIOC -> PIO_PER |= PIO_PER_P7;		// PIO enable (D6 (Pin9))
-	//PIOC -> PIO_ODR |= PIO_ODR_P7;		// P1 Configured disabled as output
-	//// Define Pin 8 on port C as input
-	//PIOC -> PIO_PER |= PIO_PER_P8;		// PIO enable (D7 (Pin10))
-	//PIOC -> PIO_ODR |= PIO_ODR_P8;		// P1 Configured disabled as output
 }
 

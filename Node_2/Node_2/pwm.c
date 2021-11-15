@@ -7,9 +7,10 @@
 
 
 #include "PWM.h"
+#include "sam.h"
 
 
-void PWM_init(void){
+void pwm_init(void){
 	
 	/* Set up PWM */
 	//PMC->PMC_SCER = PMC_SCER_PCK0 | PMC_SCER_PCK1 | PMC_SCER_PCK2;	 // Enable all programmable clocks

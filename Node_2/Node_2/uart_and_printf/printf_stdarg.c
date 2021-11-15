@@ -21,7 +21,9 @@ Edited 2020 by Eivind H. Jølsgard and Gustav O. Often for use in course TTK4155
 
 
 #include <stdarg.h>
+#include "printf_stdarg.h"
 #include "uart.h"
+
 
 
 //insert function to print to here

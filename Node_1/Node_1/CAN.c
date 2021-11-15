@@ -5,83 +5,88 @@
  *  Author: haakenl
  */ 
 
-#include "CAN.h"
+#define F_CPU 4915200
+#include <util/delay.h>
 
+#include "io.h"
+#include "can.h"
+#include "spi.h"
+#include "mcp2515.h"
 
-uint8_t CAN_read(uint8_t adr){
+uint8_t can_read(uint8_t adr){
 	uint8_t data;	
 	
-	SPI_enslaved_CAN();
-	SPI_transmit(MCP_READ);
-	SPI_transmit(adr);
-	data = SPI_recive();
-	SPI_release_CAN();
+	spi_enslaved_can();
+	spi_transmit(MCP_READ);
+	spi_transmit(adr);
+	data = spi_recive();
+	spi_release_can();
 	
 	return data;	
 }
 
-void CAN_write(uint8_t adr, uint8_t data){
-	SPI_enslaved_CAN();
-	SPI_transmit(MCP_WRITE);
-	SPI_transmit(adr);
-	SPI_transmit(data); 
-	SPI_release_CAN();		
+void can_write(uint8_t adr, uint8_t data){
+	spi_enslaved_can();
+	spi_transmit(MCP_WRITE);
+	spi_transmit(adr);
+	spi_transmit(data); 
+	spi_release_can();		
 }
 
-void CAN_bit_modify(uint8_t reg, uint8_t mask, uint8_t bit){
-	SPI_enslaved_CAN();
-	SPI_transmit(MCP_BITMOD);
-	SPI_transmit(reg);
-	SPI_transmit(mask);
-	SPI_transmit(bit);
-	SPI_release_CAN();
+void can_bit_modify(uint8_t reg, uint8_t mask, uint8_t bit){
+	spi_enslaved_can();
+	spi_transmit(MCP_BITMOD);
+	spi_transmit(reg);
+	spi_transmit(mask);
+	spi_transmit(bit);
+	spi_release_can();
 }
 
-void CAN_request_to_send(uint8_t request_to_send){
-	SPI_enslaved_CAN();
-	SPI_transmit(request_to_send);
-	SPI_release_CAN();	
+void can_request_to_send(uint8_t request_to_send){
+	spi_enslaved_can();
+	spi_transmit(request_to_send);
+	spi_release_can();	
 }
 
-uint8_t CAN_read_status(void){
+uint8_t can_read_status(void){
 	uint8_t data;
 		
-	SPI_enslaved_CAN();
-	SPI_transmit(MCP_READ_STATUS);
-	data = SPI_recive();
-	SPI_release_CAN();
+	spi_enslaved_can();
+	spi_transmit(MCP_READ_STATUS);
+	data = spi_recive();
+	spi_release_can();
 		
 	return data;	
 }
 
-void CAN_sw_reset(void){
-	SPI_enslaved_CAN();
-	SPI_transmit(MCP_RESET);
-	SPI_release_CAN();
+void can_sw_reset(void){
+	spi_enslaved_can();
+	spi_transmit(MCP_RESET);
+	spi_release_can();
 }
 
 
 // Can high level functions below
-uint8_t CAN_init(void){
+uint8_t can_init(void){
 	uint8_t error_check;	
-	CAN_sw_reset();
+	can_sw_reset();
 	_delay_ms(10);
 	
 	// Set config mode
-	error_check = CAN_read(MCP_CANSTAT);
+	error_check = can_read(MCP_CANSTAT);
 	if((error_check & MODE_MASK) != MODE_CONFIG){
 		return 1;
 	}		
 	
 	// Configure MCP 2514
-	CAN_write(MCP_CNF3, 0x05);		//see can config sheet on github
-	CAN_write(MCP_CNF2, 0xb1);		//see can config sheet on github
-	CAN_write(MCP_CNF1, 0x03);		//see can config sheet on github
-	CAN_write(MCP_CANINTE, MCP_RX_INT); //Turn on RX interrupt	
+	can_write(MCP_CNF3, 0x05);		//see can config sheet on github
+	can_write(MCP_CNF2, 0xb1);		//see can config sheet on github
+	can_write(MCP_CNF1, 0x03);		//see can config sheet on github
+	can_write(MCP_CANINTE, MCP_RX_INT); //Turn on RX interrupt	
 	
 	// Set normal mode
-	CAN_bit_modify(MCP_CANCTRL, MODE_POWERUP, MODE_NORMAL);
-		error_check = CAN_read(MCP_CANSTAT);
+	can_bit_modify(MCP_CANCTRL, MODE_POWERUP, MODE_NORMAL);
+		error_check = can_read(MCP_CANSTAT);
 		if((error_check & MODE_MASK) != MODE_NORMAL){
 			return 1;
 		}	
@@ -89,25 +94,25 @@ uint8_t CAN_init(void){
 }
 
 
-void CAN_message_send(struct can_message* msg){	
+void can_message_send(struct can_message* msg){	
 	uint8_t i;
 	
 	// set message id
-	CAN_write(MCP_TXB0SIDH, msg->id /  8);
-	CAN_write(MCP_TXB0SIDL, (msg->id % 8) << 5);
+	can_write(MCP_TXB0SIDH, msg->id /  8);
+	can_write(MCP_TXB0SIDL, (msg->id % 8) << 5);
 
 	// set message length 
-	CAN_write(MCP_TXB0DL, msg->data_length);
+	can_write(MCP_TXB0DL, msg->data_length);
 	
 	// transfer data
 	for(i = 0; i < msg->data_length; i++){
-		CAN_write(MCP_TXB0D0 + i, msg->data[i]);		
+		can_write(MCP_TXB0D0 + i, msg->data[i]);		
 	}
-	CAN_request_to_send(MCP_RTS_TX0);
+	can_request_to_send(MCP_RTS_TX0);
 }
 
 
-can_message CAN_message_receive(uint8_t mailbox){
+can_message can_message_receive(uint8_t mailbox){
 	can_message msg = {};
 	uint8_t mailbox_offset = 0;
 	if(mailbox == 1)
@@ -115,25 +120,25 @@ can_message CAN_message_receive(uint8_t mailbox){
 		mailbox_offset = 10;
 	}
 	// read message id
-	msg.id = (CAN_read(MCP_RXB0SIDH  + mailbox_offset) * 8) + (CAN_read(MCP_RXB0SIDL + mailbox_offset) >> 5);
+	msg.id = (can_read(MCP_RXB0SIDH  + mailbox_offset) * 8) + (can_read(MCP_RXB0SIDL + mailbox_offset) >> 5);
 
 	// read data length
-	msg.data_length = CAN_read(MCP_RXB0DL + mailbox_offset);
+	msg.data_length = can_read(MCP_RXB0DL + mailbox_offset);
 	
 	// read data
 	if(msg.data_length > 8){
 		msg.data_length = 8;
 	}
 	for (uint8_t i = 0; i < msg.data_length; i++) {
-		msg.data[i] = CAN_read(MCP_RXB0D0 + mailbox_offset + i);
+		msg.data[i] = can_read(MCP_RXB0D0 + mailbox_offset + i);
 	}
 	// reset int RX1 flag
-	CAN_bit_modify(MCP_CANINTF, (MCP_RX0IF  + mailbox), 0);
+	can_bit_modify(MCP_CANINTF, (MCP_RX0IF  + mailbox), 0);
 	return msg;
 }
 
-void CAN_mailbox(void){
-	uint8_t int_flag = CAN_read(MCP_CANINTF);
-	CAN_mailbox_0_recive_flag = (int_flag & MCP_RX0IF);
-	CAN_mailbox_1_recive_flag = (int_flag & MCP_RX1IF);
+void can_mailbox(void){
+	uint8_t int_flag = can_read(MCP_CANINTF);
+	can_mailbox_0_recive_flag = (int_flag & MCP_RX0IF);
+	can_mailbox_1_recive_flag = (int_flag & MCP_RX1IF);
 }

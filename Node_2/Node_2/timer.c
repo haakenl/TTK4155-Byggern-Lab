@@ -5,7 +5,10 @@
  *  Author: haakenl
  */ 
 
-#include "Timer.h"
+#include "timer.h"
+
+#include "io.h"
+#include "motor.h"
 
 
 void _delay_us(uint32_t us) //NB max value is 1597 000us
@@ -23,7 +26,7 @@ void _delay_ms(uint32_t ms)
 	}
 }
 
-void Timer_init(void){
+void timer_init(void){
 									 
 	/* Setup Timer 0 */	
 	PMC->PMC_PCER0 |= PMC_PCER0_PID27;		// Enable clock on TC0
@@ -42,5 +45,5 @@ void Timer_init(void){
 void TC0_Handler(void){
 	uint32_t clear_TCO_flag = REG_TC0_SR0;//SR0_flag = REG_TC0_SR0;  // Interrupt flag is cleared by reading  
 	game_clock = game_clock + 1;
-	PID_regulator();
+	pid_regulator();
 }

@@ -37,6 +37,6 @@
 /* Set up MJ2 */
 #define read_encoder_mask PIOC -> PIO_PDSR & 0x1FE			// read encoder data mask
 
-void IO_Init(void);
+void io_init(void);
 
 #endif /* IO_H_ */
