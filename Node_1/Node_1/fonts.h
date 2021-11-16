@@ -10,7 +10,7 @@
 #include <avr/pgmspace.h>
 
 char font_size = 5;  //Default font size
-unsigned char font;
+unsigned char font; 
 
 
 // Font 8x8 - Large
