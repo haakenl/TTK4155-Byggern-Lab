@@ -28,7 +28,7 @@ int main(void)
 	/* Execute init's*/	
 	io_init();
 	uart_init();
-	sram_init();
+	parallel_bus_init();
 	adc_init();
 	oled_init();
 	gui_init();
@@ -36,7 +36,7 @@ int main(void)
 	errorflag = can_init();
 	
 	
-	/* Print menu */
+	/* Print main menu */
 	gui_print_menu(current_menu);
 	gui_print_arrow(0);
 	

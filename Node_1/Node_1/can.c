@@ -1,5 +1,5 @@
 /*
- * CAN.c
+ * can.c
  *
  * Created: 06.10.2021 09:59:40
  *  Author: haakenl
@@ -7,12 +7,12 @@
 
 #define F_CPU 4915200
 #include <util/delay.h>
-
 #include "io.h"
 #include "can.h"
 #include "spi.h"
 #include "mcp2515.h"
 
+/* Read CAN register */
 uint8_t can_read(uint8_t adr){
 	uint8_t data;	
 	
@@ -25,6 +25,7 @@ uint8_t can_read(uint8_t adr){
 	return data;	
 }
 
+/* Write to CAN register */
 void can_write(uint8_t adr, uint8_t data){
 	spi_enslaved_can();
 	spi_transmit(MCP_WRITE);
@@ -33,6 +34,7 @@ void can_write(uint8_t adr, uint8_t data){
 	spi_release_can();		
 }
 
+/* Modify single bit in CAN register */
 void can_bit_modify(uint8_t reg, uint8_t mask, uint8_t bit){
 	spi_enslaved_can();
 	spi_transmit(MCP_BITMOD);
@@ -42,12 +44,13 @@ void can_bit_modify(uint8_t reg, uint8_t mask, uint8_t bit){
 	spi_release_can();
 }
 
+/* CAN request to send message */
 void can_request_to_send(uint8_t request_to_send){
 	spi_enslaved_can();
 	spi_transmit(request_to_send);
 	spi_release_can();	
 }
-
+/* Read CAN status register */
 uint8_t can_read_status(void){
 	uint8_t data;
 		
@@ -59,14 +62,14 @@ uint8_t can_read_status(void){
 	return data;	
 }
 
+/* CAN controller SW reset */
 void can_sw_reset(void){
 	spi_enslaved_can();
 	spi_transmit(MCP_RESET);
 	spi_release_can();
 }
 
-
-// Can high level functions below
+/* CAN init */
 uint8_t can_init(void){
 	uint8_t error_check;	
 	can_sw_reset();
@@ -78,7 +81,7 @@ uint8_t can_init(void){
 		return 1;
 	}		
 	
-	// Configure MCP 2514
+	// Configure MCP 2515
 	can_write(MCP_CNF3, 0x05);		//see can config sheet on github
 	can_write(MCP_CNF2, 0xb1);		//see can config sheet on github
 	can_write(MCP_CNF1, 0x03);		//see can config sheet on github
@@ -93,7 +96,7 @@ uint8_t can_init(void){
 	return 0;
 }
 
-
+/* Send can message from mailbox 0 */
 void can_message_send(struct can_message* msg){	
 	uint8_t i;
 	
@@ -111,7 +114,7 @@ void can_message_send(struct can_message* msg){
 	can_request_to_send(MCP_RTS_TX0);
 }
 
-
+/* Receive CAN message from mailbox 0 or 1 */
 can_message can_message_receive(uint8_t mailbox){
 	can_message msg = {};
 	uint8_t mailbox_offset = 0;
@@ -137,6 +140,7 @@ can_message can_message_receive(uint8_t mailbox){
 	return msg;
 }
 
+/* Check mailbox receive interrupt flags */
 void can_mailbox(void){
 	uint8_t int_flag = can_read(MCP_CANINTF);
 	can_mailbox_0_recive_flag = (int_flag & MCP_RX0IF);

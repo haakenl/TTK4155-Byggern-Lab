@@ -5,12 +5,13 @@
  *  Author: haakenl
  */ 
 
+#include "stdlib.h"
 #include "motor.h"
 #include "timer.h"
 #include "io.h"
 #include "analog_io.h"
-#include "stdlib.h"
 
+/* Setup motor reset the encoder, reads encoder range and set PI parameters */
 void motor_init(void){
 	enable_motor;
 	set_motor_speed(-2000);
@@ -27,7 +28,7 @@ void motor_init(void){
 			
 	}
 	
-	
+/* Read encoder */	
 int16_t read_encoder(void){
 	int16_t pos_and_direction = 0;
 	enable_encoder;
@@ -41,7 +42,7 @@ int16_t read_encoder(void){
 	return pos_and_direction;
 }
 
-
+/* Reset encoder */
 void reset_encoder(void){
 	enable_encoder;
 	enable_encoder_reset;
@@ -50,7 +51,7 @@ void reset_encoder(void){
 	disable_encoder;
 }
 
-
+/* Update motor speed and direction */
 void set_motor_speed(int16_t speed_and_direction){
 	if (speed_and_direction < 0){
 		set_neg_motor_dir;
@@ -62,6 +63,7 @@ void set_motor_speed(int16_t speed_and_direction){
 	}
 }
 
+/* Update PID reference based on 8-bit unsigned value */
 void update_pos_ref(int16_t ref_pos){
 	ref_pos = ref_pos - 38;    //offset compensating for Joystick
 	if (ref_pos < 38){
@@ -70,7 +72,7 @@ void update_pos_ref(int16_t ref_pos){
 	pid.pos_ref = (encoder_range/2)-(ref_pos-115)*100;
 }
 
-
+/* Updates PID regulator this function needs to be run every 10mS */
 void pid_regulator(void){
 	pid.pos = read_encoder();
 		

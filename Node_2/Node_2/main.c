@@ -5,8 +5,7 @@
  * Author : HLunn
  */ 
 
-//#include <stdio.h>
-//#include <stdarg.h>
+
 #include "sam.h"
 #include "uart_and_printf/uart.h"
 #include "uart_and_printf/printf_stdarg.h"
@@ -14,9 +13,8 @@
 #include "io.h"
 #include "analog_io.h"
 #include "pwm.h"
-#include "timer.h"
 #include "motor.h"
-
+#include "timer.h"
 
 
 
@@ -26,7 +24,8 @@ int main(void)
 	/* Initialize the SAM system */
     SystemInit();
 	WDT->WDT_MR = WDT_MR_WDDIS; //Disable Watchdog Timer
-		
+	
+	/* Initialized node 2 */	
 	configure_uart();
 	can_init_def_tx_rx_mb(0x00290165);		//see can config sheet on github
 	io_init();
@@ -35,14 +34,13 @@ int main(void)
 	motor_init();
 	timer_init();
 	
-	
-	printf("Welcome PuTTY's\n\r");
+	/* Set node 2 in waiting mode */
+	//printf("Welcome PuTTY's\n\r");
+	//game_score = 0;
 	//set_orange_LED;
 	set_green_LED;
-		
-	game_score = 0;
-    game_ended = 1;
-	
+	game_ended = 1;
+
 	//game.id = 1;
 	//game.data_length = 2;
 	//game.data[0] = 1;
@@ -51,17 +49,16 @@ int main(void)
 	
 	while (1) 
     {
-		set_green_LED;
+		/* Check if there is any goals */
 		if(ir_detection(300) == 1){
 			while(ir_detection(1500) == 1);
 			game_score = game_score + 1;
 		}
 		
-		
+		/* Check game clock and if there is any games ongoing */
 		if(game_clock >= 3000 && game_ended == 0){ //game time = 30 sek
-			
 			game_ended = 1;
-			// Send CAN message
+			/* Send CAN message */
 			game.id = 1;
 			game.data_length = 2;
 			game.data[0] = game_score;

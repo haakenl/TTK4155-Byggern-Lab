@@ -1,5 +1,5 @@
 /*
- * GUI.c
+ * gui.c
  *
  * Created: 25.09.2021 11:29:45
  *  Author: haakenl
@@ -19,7 +19,7 @@
 #include "spi.h"
 
 /* Strings stored in program memory to save progmem:
-https://www.nongnu.org/avr-libc/user-manual/pgmspace.html*/
+https://www.nongnu.org/avr-libc/user-manual/pgmspace.html */
 
 const char str00[] PROGMEM = "Print high score";
 const char str01[] PROGMEM = "High score cleared";
@@ -84,6 +84,9 @@ PGM_P const string_table[] PROGMEM =
 
 char buffer[1];
 
+
+/* Menu structure with "childs"*/
+
 			menu_t SPI_loopback = {39, 0, &SPI_loopback};	
 			menu_t RS232_loopback = {38, 0, &RS232_loopback};
 			menu_t SRAM_test_menu = {37, 0, &SRAM_test_menu};
@@ -98,6 +101,7 @@ char buffer[1];
 		menu_t main_menu = {28, 4, NULL, {&new_game, &high_score, &clear_high_score, &settings}};
 	menu_t* current_menu;
 
+/* Setup all "parents" */
 void gui_init(){
 			
 			SPI_loopback.parent = &settings;
@@ -116,6 +120,7 @@ void gui_init(){
 	current_menu = &main_menu;
 }
 
+/* Print to OLED menu */
 void gui_print_menu(menu_t* print_menu){
 	oled_clear_all();
 	for(int i=0; i<print_menu->number_of_childs; i++) {
@@ -125,38 +130,43 @@ void gui_print_menu(menu_t* print_menu){
 	}
 }
 
+/* Print single string to OLED */
 void gui_print_string(uint16_t i){
 	strcpy_P(buffer, (PGM_P)pgm_read_word(&(string_table[i])));
 	oled_printf(buffer); 
 }
 
+/* Print navigation arrow to OLD */
 void gui_print_arrow(int page){
 		oled_clear_arrow();
 		oled_pos(page, 0);
 		oled_printf("->");
 }
 
+/* Step one menu down */
 int gui_menu_down(int current_page){
 	current_menu = current_menu->children[current_page];
 	current_page = 0;
-	oled_pos(0,0);
+	oled_pos(0,0);													// kan fjernes test på lab
 	gui_print_menu(current_menu);
-	oled_pos(0,0);
+	oled_pos(0,0);													// kan fjernes test på lab
 	gui_print_arrow(current_page);
 	return current_page;
 }
 
+/* Step one menu up */
 int gui_menu_up(int current_page){
 	current_menu = current_menu->parent;
 	current_page = 0;
-	oled_pos(0,0);
+	oled_pos(0,0);												// kan fjernes test på lab
 	gui_print_menu(current_menu);
-	oled_pos(0,0);
+	oled_pos(0,0);												// kan fjernes test på lab
 	gui_print_arrow(current_page);
 	return current_page;
 }
 
-void gui_menu_action(int current_page){
+/* Depending on the current menu one specific tasks will run until stopped by user */
+void gui_menu_action(int current_page){						// current_page brukes i denne funksjoene kan gjøres om til void test på lab
 	adc_direction current_direction;
 	uint8_t  current_child;
 	current_child = current_menu->name;
@@ -167,7 +177,7 @@ void gui_menu_action(int current_page){
 		gui_print_string(42); //Print "HAVE FUN"
 		_delay_ms(200);
 		
-		/*Clear any mail box interrupt flags*/
+		/*Clear any mail box interrupt flags */
 		if(test_bit(can_int_flag_reg, can_int_flag_bit) == 0){
 		can_mailbox();
 			if(can_mailbox_0_recive_flag == 1){
@@ -416,7 +426,8 @@ void gui_menu_action(int current_page){
 		while(current_direction != LEFT){
 			current_direction = debounce_joystick_direction();
 			if(test_bit(UCSR0A, RXC0)){
-				uart_transmit(UDR0);
+				FILE* test = 0;
+				uart_transmit_char(UDR0,test);
 			}
 		}
 	_delay_ms(200);
@@ -445,6 +456,7 @@ void gui_menu_action(int current_page){
 	}
 }
 
+/* Navigate through the menu system based on the joystick position */
 void gui_menu(){
 	static adc_direction previous_direction = NEUTRAL;
 	static int current_page = 0;

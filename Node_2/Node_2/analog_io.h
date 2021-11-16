@@ -1,5 +1,5 @@
 /*
- * Analog_IO.h
+ * analog_iO.h
  *
  * Created: 23.10.2021 11:45:09
  *  Author: haakenl

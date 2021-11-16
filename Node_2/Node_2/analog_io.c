@@ -8,7 +8,7 @@
 #include "analog_io.h"
 #include "timer.h"
 
-
+/* Set up analog inputs and outputs*/
 void analog_io_init(void){
 	/* Set up IR detection ADC */
 	ADC -> ADC_WPMR &= ~ADC_WPMR_WPEN;		// Disable ADC Write protection 
@@ -29,6 +29,7 @@ void analog_io_init(void){
 	DACC -> DACC_CDR = 0;							// Set initial value to zero.
 }
 
+/* Check if ADC input is under an given threshold */
 uint8_t ir_detection(uint16_t threshold){
 	if(Read_IR_VALUE < threshold){
 		return 1;
@@ -36,7 +37,7 @@ uint8_t ir_detection(uint16_t threshold){
 	return 0;
 }
 			
-
+/* Set DAC to a given voltage level */
 void set_analog_value(uint16_t value){
 	if(value > 4095){
 		value = 4095;

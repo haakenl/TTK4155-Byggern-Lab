@@ -1,5 +1,5 @@
 /*
- * SRAM.c
+ * sram.c
  *
  * Created: 08.09.2021 08:26:19
  *  Author: haakenl
@@ -11,12 +11,12 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-
 #include "sram.h"
 #include "io.h"
 #include "oled.h"
 
-
+/* Strings stored in program memory to save progmem:
+https://www.nongnu.org/avr-libc/user-manual/pgmspace.html */
 const char str0sram[] PROGMEM = "Write errors: %d";
 const char str1sram[] PROGMEM = "Retrieval errors: %d";
 
@@ -27,23 +27,28 @@ PGM_P const string_table_sram[] PROGMEM =
 
 char buffer_sram[1];
 
-void sram_init(){
+
+/* Set up parallel bus */
+void parallel_bus_init(){
 	set_bit(MCUCR,SRE); // Setting SRE enables external SRAM with ALE, WR, RD. Override all other pin settings. Writing to zero disables. 
 	set_bit(EMCUCR, SRW01); // Wait two cycles during Read/Write
 	set_bit(SFIOR,XMM2); // Mask out JTAG. PC4-PC7. 
 }
 
+/* Write 8 bits of data to SRAM in register xx */
 void sram_write(uint8_t data, int index){
 	volatile char *ext_ram = (char *) 0x1800; // Start address for the SRAM
 	ext_ram[index] = data;
 }
+
+/* Read 8 bits of data from SRAM in register xx */
 uint8_t sram_read(int index){
 	volatile char *ext_ram = (char *) 0x1800; // Start address for the SRAM
 	uint8_t retreived_value = ext_ram[index];
 	return retreived_value;
 }
 
-
+/* Runs SRAM test supplied by NTNU and prints the results on the OLED */
 void sram_test_OLED_print(void)
 {
 	_delay_ms(100);

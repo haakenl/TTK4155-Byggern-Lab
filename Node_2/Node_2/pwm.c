@@ -6,10 +6,10 @@
  */ 
 
 
-#include "pwm.h"
 #include "sam.h"
+#include "pwm.h"
 
-
+/* Set up PWM used by the servo */
 void pwm_init(void){
 	
 	/* Set up PWM */
@@ -29,7 +29,7 @@ void pwm_init(void){
 	REG_PWM_ENA = PWM_ENA_CHID5;	// Enable PWM
 }
 
-
+/* Up date PWM servo position based on 8-bit unsigned value */
 void set_servo_pos(int value){
 	value = value - 38;    //offset compensating for Joystick
  	if (value < 38){	 

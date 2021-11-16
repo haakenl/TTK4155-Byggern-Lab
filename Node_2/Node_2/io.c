@@ -7,6 +7,7 @@
 
 #include "io.h"
 
+/* Set up all digital inputs and outputs */
 void io_init(void){
 	
 	/* Set up LEDS */

@@ -1,5 +1,5 @@
 /*
- * ADC.h
+ * adc.h
  *
  * Created: 08.09.2021 12:51:33
  *  Author: haakenl
@@ -27,7 +27,6 @@ typedef enum {LEFT, RIGHT, UP, DOWN, NEUTRAL} adc_direction;
 
 void adc_init();
 void joystick_calibrate();
-
 adc_pos adc_read();
 adc_direction joystick_direction();
 adc_direction debounce_joystick_direction();

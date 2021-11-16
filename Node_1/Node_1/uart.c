@@ -1,5 +1,5 @@
 /*
- * UART.c
+ * uart.c
  *
  * Created: 01.09.2021 17:15:36
  *  Author: haakenl
@@ -10,19 +10,10 @@
 
 #include <avr/io.h>
 #include <stdio.h>
-
 #include "uart.h"
 
-void uart_transmit(unsigned char data){
-	loop_until_bit_is_set(UCSR0A, UDRE0);
-	UDR0 = data;
-}
 
-unsigned char uart_receive(void){
-	loop_until_bit_is_set(UCSR0A, RXC0);
-	return UDR0;
-}
-
+/* Set up USART for RS232 communication */
 void uart_init(){
 	
 	// UBRR : USART Baud rate register
@@ -38,5 +29,32 @@ void uart_init(){
 	// Enable Transmitter and Receiver
 	UCSR0B = (1<<TXEN0)|(1<<RXEN0);
 	
-	fdevopen(uart_transmit, uart_receive);
+	fdevopen(uart_transmit_char, uart_receive_char);
 }
+
+/* Transmits 8-bit of data over USART */
+int uart_transmit_char(char data, FILE* file){
+	loop_until_bit_is_set(UCSR0A, UDRE0);
+	UDR0 = data;
+	return 0;
+}
+
+/* Receives 8-bit of data over USART */
+int uart_receive_char(FILE* file){
+	loop_until_bit_is_set(UCSR0A, RXC0);
+	return UDR0;
+}
+
+
+// OLD
+///* Transmits 8-bit of data over USART */
+//void uart_transmit(unsigned char data){
+	//loop_until_bit_is_set(UCSR0A, UDRE0);
+	//UDR0 = data;
+//}
+//
+///* Receives 8-bit of data over USART */
+//unsigned char uart_receive(void){
+	//loop_until_bit_is_set(UCSR0A, RXC0);
+	//return UDR0;
+//}

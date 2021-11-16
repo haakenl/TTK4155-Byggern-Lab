@@ -1,16 +1,14 @@
 /*
- * Timer.c
+ * timer.c
  *
  * Created: 27.10.2021 10:11:14
  *  Author: haakenl
  */ 
 
 #include "timer.h"
-
-#include "io.h"
 #include "motor.h"
 
-
+/* Delays the system for a given number of micro seconds */
 void _delay_us(uint32_t us) //NB max value is 1597 000us
 {
 	SysTick->LOAD = 10.5 * us; //MCK = 10.5MHz
@@ -19,6 +17,7 @@ void _delay_us(uint32_t us) //NB max value is 1597 000us
 	SysTick->CTRL &= ~SysTick_CTRL_ENABLE_Msk; // Disable SysTick
 }
 
+/* Delays the system for a given number of milli seconds */
 void _delay_ms(uint32_t ms) 
 {
 	for(uint32_t i = 0; i<ms; i++){
@@ -26,9 +25,8 @@ void _delay_ms(uint32_t ms)
 	}
 }
 
+/* Setup Timer 0 */	
 void timer_init(void){
-									 
-	/* Setup Timer 0 */	
 	PMC->PMC_PCER0 |= PMC_PCER0_PID27;		// Enable clock on TC0
 	TC0->TC_WPMR &= ~TC_WPMR_WPEN;			// Disable TC write protection
 	REG_TC0_CMR0 |= TC_CMR_TCCLKS_TIMER_CLOCK3 | TC_CMR_CPCTRG;		// Set 32 prescaler and resets on compare match
@@ -37,11 +35,11 @@ void timer_init(void){
 	
 	NVIC_EnableIRQ(TC0_IRQn);		// Enable timer counter interrupt
 	REG_TC0_CCR0 |= TC_CCR_CLKEN| TC_CCR_SWTRG;	// Enable Timer 0
-	//REG_TC0_RC0 = 2625;				// counts = 1ms/(32/MCK)
 	REG_TC0_RC0 = 26250;				// counts = 10ms/(32/MCK)
 	game_clock = 0;
 }
 
+/* TC0 interrupt handler */
 void TC0_Handler(void){
 	uint32_t clear_TCO_flag = REG_TC0_SR0;//SR0_flag = REG_TC0_SR0;  // Interrupt flag is cleared by reading  
 	game_clock = game_clock + 1;

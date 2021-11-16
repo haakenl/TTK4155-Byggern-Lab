@@ -1,5 +1,5 @@
 /*
- * SPI.h
+ * spi.h
  *
  * Created: 06.10.2021 09:14:57
  *  Author: haakenl

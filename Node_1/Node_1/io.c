@@ -1,5 +1,5 @@
 /*
- * IO.c
+ * io.c
  *
  * Created: 23.10.2021 15:18:19
  *  Author: haakenl
@@ -7,6 +7,7 @@
 
 #include "io.h"
 
+/* Configures buttons as input */
 void io_init(void){
 		/*Indicator LED setup*/
 		set_bit(led_reg, led_error);

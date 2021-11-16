@@ -1,5 +1,5 @@
 /*
- * IO.h
+ * io.h
  *
  * Created: 23.10.2021 15:18:08
  *  Author: haakenl
@@ -18,6 +18,9 @@
 #define button_joy_bit PB1
 #define button_rigth_bit PB3
 #define button_left_bit PB2
+
+#define adc_clk_reg DDRB
+#define adc_clk_pin PB0
 
 #define spi_can_reg DDRB
 #define spi_can_port PORTB

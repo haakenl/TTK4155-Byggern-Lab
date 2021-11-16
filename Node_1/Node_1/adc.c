@@ -1,5 +1,5 @@
 /*
- * ADC.c
+ * adc.c
  *
  * Created: 08.09.2021 12:51:20
  *  Author: haakenl
@@ -12,9 +12,10 @@
 #include "adc.h"
 #include "io.h"
 
+/* ADC init */
 void adc_init(){
-	// Set timer/counter0 to PD0 (2.5MHz clock to ADC)
-	set_bit(DDRB, PB0); // Set PB0 as output
+	// Set timer/counter0 to PB0 (2.5MHz clock to ADC)
+	set_bit(adc_clk_reg, adc_clk_pin); // Set PB0 as output
 	set_bit(TCCR0,WGM01); // Set CTC Mode
 	set_bit(TCCR0, COM00); // Toggle on Compare match
 	set_bit(TCCR0,CS00); // Turn of prescaler 
@@ -25,12 +26,12 @@ void adc_init(){
 	joy_deadband = 60;
 }	
 
-// Should read current position values for joystick with values from 0-255
+/* ACD should be in hardwire mode */
 adc_pos adc_read(){
 	adc_pos return_pos;
 	volatile uint8_t *ext_ADC = (uint8_t * ) 0x1400; // Start address for the ADC channels	
 	ext_ADC[0] = 0;	
-	//Parralell bus is set up to wait one cycle  //Bør byttes med while og interrupt flag. (busy sig) vis nødvendig
+	//Parallel bus is set up to wait one cycle, this gives the ADC time to prepare data transfere.
 	return_pos.joy_y = ext_ADC[0];
 	return_pos.joy_x = ext_ADC[0];
 	return_pos.slider_left = ext_ADC[0];
@@ -39,6 +40,7 @@ adc_pos adc_read(){
 	return return_pos;
 }
 
+/* Calibrates center position of joystick used by the menu system */
 void joystick_calibrate(){
 	adc_pos pos = adc_read(); //Dummy read
 	double AVG_joy_x = 0;

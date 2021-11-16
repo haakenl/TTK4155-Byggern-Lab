@@ -1,5 +1,5 @@
 /*
- * GUI.h
+ * gui.h
  *
  * Created: 25.09.2021 11:29:27
  *  Author: haakenl

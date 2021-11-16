@@ -1,5 +1,5 @@
 /*
- * OLED.c
+ * oled.c
  *
  * Created: 22.09.2021 10:55:44
  *  Author: Haakenl
@@ -9,19 +9,20 @@
 #include "oled.h"
 #include "fonts.h"
 
-
+/* Send OLED command on the parallel bus */
 void oled_write_command(char  command){
 	volatile char *OLED_write = (char *) 0x1000;
 	*OLED_write = command; // Removed [0] from OLED_write
 }
 
+/* Send OLED data on the parallel bus */
 void oled_write_data(char data){
 	volatile char *OLED_write = (char *) 0x1200;
 	*OLED_write = data; // Removed [0] from OLED_write
 }
 
+/* OLED init. Cited OLED controller data sheet 22.09.21 */
 void oled_init(){
-	// Cited datasheet OLED controller 22.09.21
 	oled_write_command(0xae); // display off
 	oled_write_command(0xa1); // segment remap
 	oled_write_command(0xda); // common pads hardware: alternative
@@ -46,18 +47,21 @@ void oled_init(){
 	oled_write_command(0xaf); // display on
 }
 
+/* Prints characters to OLED form font 5 ascii table */
 void oled_print(char c){
 	for(uint8_t i = 0; i < font_size; i++){
 		oled_write_data(pgm_read_byte(&font5[c - 32][i]));
 	}
 }
 
+/* Prints string to OLED */
 void oled_printf(char str[]){
 	for(int i = 0; i < strlen(str); i++){
 		oled_print(str[i]);
 	}
 }
 
+/* Set OLED position */
 void oled_pos(uint8_t page, uint8_t seg){
 	//Go to page
 	oled_write_command(page | (0xb0));
@@ -66,13 +70,14 @@ void oled_pos(uint8_t page, uint8_t seg){
 	oled_write_command(((seg & 0xf0) >> 4) | (0x10));
 }
 
-void oled_clear_line(uint8_t line){
-	oled_pos(line, 0);
+/* Clear single page on OLED */
+void oled_clear_line(uint8_t page){
+	oled_pos(page, 0);
 	for (uint8_t i = 0; i < 128; i++){
 		oled_write_data(0x0);
 	}
 }
-
+/* Clear part of OLED from bottom left corner. */
 void oled_clear_line_from(uint8_t page, uint8_t seg){
 	oled_pos(page,seg);
 	for (uint8_t i = seg; i < 128; i++){
@@ -80,7 +85,7 @@ void oled_clear_line_from(uint8_t page, uint8_t seg){
 	}
 }
 
-
+/* Clear arrow used to indicate position in menu */
 void oled_clear_arrow(void){
 	oled_pos(0,0);
 	for (uint8_t j = 0; j < 8; j++){
@@ -91,6 +96,7 @@ void oled_clear_arrow(void){
 	}
 }
 
+/* Clear OLED */
 void oled_clear_all(){
 		oled_pos(0,0);
 		for (uint8_t j = 0; j < 8; j++){
@@ -101,6 +107,7 @@ void oled_clear_all(){
 		}
 }
 
+/* Fill OLED */
 void oled_fill_all(){
 	oled_pos(0,0);
 	for (uint8_t j = 0; j < 8; j++){

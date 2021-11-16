@@ -1,5 +1,5 @@
 /*
- * SRAM.h
+ * sram.h
  *
  * Created: 08.09.2021 08:26:35
  *  Author: haakenl
@@ -12,7 +12,7 @@
 #include <avr/io.h>
 #include <stdint.h>
 
-void sram_init();
+void parallel_bus_init();
 void sram_write(uint8_t data, int index);
 uint8_t sram_read(int index);
 void sram_test(void);
