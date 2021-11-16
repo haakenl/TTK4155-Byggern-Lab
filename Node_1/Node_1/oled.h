@@ -1,5 +1,5 @@
 /*
- * OLED.h
+ * oled.h
  *
  * Created: 22.09.2021 10:55:59
  *  Author: Haakenl
