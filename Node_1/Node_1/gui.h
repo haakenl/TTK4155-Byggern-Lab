@@ -28,6 +28,7 @@ int gui_menu_down(int current_page);
 int gui_menu_up(int current_page);
 void gui_menu_action(int current_page);
 void gui_menu();
+void game_play(uint8_t user);
 
 can_message ADC_to_node2;
 can_message button_to_node2;

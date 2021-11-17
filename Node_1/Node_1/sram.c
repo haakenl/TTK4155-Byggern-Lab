@@ -48,6 +48,15 @@ uint8_t sram_read(int index){
 	return retreived_value;
 }
 
+/* Write 0 to all registers in sram */
+void sram_clear(void){
+		uint16_t ext_ram_size = 800;
+		for (uint16_t i = 0; i < ext_ram_size; i++) {
+			sram_write(100, i);
+		}
+}
+
+
 /* Runs SRAM test supplied by NTNU and prints the results on the OLED */
 void sram_test_OLED_print(void)
 {
@@ -79,7 +88,7 @@ void sram_test_OLED_print(void)
 			retrieval_errors++;
 		}
 	}
-	
+	 sram_clear();
 	_delay_ms(100);
 	
 	char write_errors_print[20];
