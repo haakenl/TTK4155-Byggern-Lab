@@ -60,7 +60,7 @@ int main(void)
 		}
 		
 		/* Check game clock and if there is any games ongoing */
-		if(game_clock >= 6000 && game_run == 1){ //game time = 30 sek
+		if(game_clock >= 6000 && game_run == 1){ //game time = 60 sek
 			game_run = 0;
 			//for(uint8_t i  = 0; i < 10; i++){
 				
