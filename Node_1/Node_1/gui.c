@@ -189,24 +189,25 @@ void gui_menu_action(int current_page){						// current_page brukes i denne funk
 			}
 		}
 		
-		uint8_t score = 0;
-		uint8_t read_can_flag = 1;
+		uint8_t game_score = 0;
+
 		
-		game.id = 4;			// New game 
-		game.data_length = 2;
-		game.data[0] = 0;		// reset game score
-		game.data[1] = 0;		// reset and game clock
-		can_message_send(&game);
+		game_to_node2.id = 4;			// New game 
+		game_to_node2.data_length = 3;
+		game_to_node2.data[0] = game_score;		// reset game score
+		game_to_node2.data[1] = 0;		// reset and game clock
+		game_to_node2.data[2] = 1;		// run game
+		can_message_send(&game_to_node2);
 		
-		uint8_t stop_transmitting_ADC_values = 0;
-		while(stop_transmitting_ADC_values == 0){
+		uint8_t game_run = 1;
+		while(game_run == 1){
 			/* Shoot! */
-			if(!(test_bit(PINB, PINB1))){
+			if(!(test_bit(button_pin, button_joy_bit))){
 				button_to_node2.id = 2;
 				button_to_node2.data_length = 1;
 				button_to_node2.data[0] = 1;
 				can_message_send(&button_to_node2);
-				_delay_ms(50);
+				_delay_ms(10);
 				while(!test_bit(button_pin, button_joy_bit));
 				button_to_node2.id = 2;
 				button_to_node2.data_length = 1;
@@ -220,38 +221,34 @@ void gui_menu_action(int current_page){						// current_page brukes i denne funk
 			ADC_to_node2.data[0] = adc_pos.joy_x ;
 			ADC_to_node2.data[1] = adc_pos.joy_y; 			
 			can_message_send(&ADC_to_node2);
-			/* Wait 16ms this gives ~60 ADC updates per seconded (same update frequency as digitizer on smart phones) */
-			_delay_ms(16);
+			/* Wait 10ms this gives ~100 ADC updates per seconded */
+			_delay_ms(10);
+
 		
-			read_can_flag = test_bit(can_int_flag_reg, can_int_flag_bit);
-			if(read_can_flag == 0){
-				printf("flag \n");
+			if(test_bit(can_int_flag_reg, can_int_flag_bit) == 0){
 				can_mailbox();
+				
 				if(can_mailbox_0_recive_flag == 1){
-					printf("mail 0 \n");
-					game_ended = can_message_receive(0);
-					printf("mail 0 id %d\n", game_ended.id);
-					if (game_ended.id  == 1){
-						score = game_ended.data[0];
-						stop_transmitting_ADC_values = game_ended.data[1];
+					game_from_node2 = can_message_receive(0);
+					if (game_from_node2.id  == 1){
+						game_score = game_from_node2.data[0];
+						game_run = game_from_node2.data[1];
 					}
 				}
 				if(can_mailbox_1_recive_flag == 1){
-					printf("mail 0 \n");
-					game_ended = can_message_receive(1);
-					printf("mail 1 id %d\n", game_ended.id);
-					if (game_ended.id  == 1){
-						score = game_ended.data[0];
-						stop_transmitting_ADC_values = game_ended.data[1];
+					game_from_node2 = can_message_receive(1);
+					if (game_from_node2.id  == 1){
+						game_score = game_from_node2.data[0];
+						game_run = game_from_node2.data[1];
 					}
 				}
 			}
 		}
-			
+					
 		oled_clear_all();
 		char score_print[20];
 		strcpy_P(buffer, (PGM_P)pgm_read_word(&(string_table[40])));
-		sprintf(score_print, buffer, score);
+		sprintf(score_print, buffer, game_score);
 		oled_pos(3, 40);
 		oled_printf(score_print);
 		oled_pos(7, 0);
@@ -260,9 +257,9 @@ void gui_menu_action(int current_page){						// current_page brukes i denne funk
 		while(current_direction != LEFT){
 			current_direction = debounce_joystick_direction();
 		}	
-	_delay_ms(200);
-	}
+		_delay_ms(200);
 	
+	}
 	/* High Score */
 	else if(current_child == 30){ 
 			oled_pos(3, 24);
@@ -426,8 +423,8 @@ void gui_menu_action(int current_page){						// current_page brukes i denne funk
 		while(current_direction != LEFT){
 			current_direction = debounce_joystick_direction();
 			if(test_bit(UCSR0A, RXC0)){
-				FILE* test = 0;
-				uart_transmit_char(UDR0,test);
+				//FILE* test = 0;
+				uart_transmit_char(UDR0);//,test);
 			}
 		}
 	_delay_ms(200);

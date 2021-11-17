@@ -33,28 +33,28 @@ void uart_init(){
 }
 
 /* Transmits 8-bit of data over USART */
-int uart_transmit_char(char data, FILE* file){
-	loop_until_bit_is_set(UCSR0A, UDRE0);
-	UDR0 = data;
-	return 0;
-}
-
-/* Receives 8-bit of data over USART */
-int uart_receive_char(FILE* file){
-	loop_until_bit_is_set(UCSR0A, RXC0);
-	return UDR0;
-}
-
-
-// OLD
-///* Transmits 8-bit of data over USART */
-//void uart_transmit(unsigned char data){
+//int uart_transmit_char(char data, FILE* file){
 	//loop_until_bit_is_set(UCSR0A, UDRE0);
 	//UDR0 = data;
+	//return 0;
 //}
 //
 ///* Receives 8-bit of data over USART */
-//unsigned char uart_receive(void){
+//int uart_receive_char(FILE* file){
 	//loop_until_bit_is_set(UCSR0A, RXC0);
 	//return UDR0;
 //}
+
+
+// OLD
+/* Transmits 8-bit of data over USART */
+void uart_transmit_char(unsigned char data){
+	loop_until_bit_is_set(UCSR0A, UDRE0);
+	UDR0 = data;
+}
+
+/* Receives 8-bit of data over USART */
+unsigned char uart_receive_char(void){
+	loop_until_bit_is_set(UCSR0A, RXC0);
+	return UDR0;
+}

@@ -30,6 +30,6 @@ uint8_t can_receive(CAN_MESSAGE* can_msg, uint8_t mailbox_id);
 CAN_MESSAGE game;
 
 char game_score;
-char game_ended;
+char game_run;
 
 #endif /* CAN_CONTROLLER_H_ */

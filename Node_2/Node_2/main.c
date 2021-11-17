@@ -34,18 +34,15 @@ int main(void)
 	motor_init();
 	timer_init();
 	
-	/* Set node 2 in waiting mode */
+	
 	//printf("Welcome PuTTY's\n\r");
-	//game_score = 0;
 	//set_orange_LED;
 	set_green_LED;
-	game_ended = 1;
+	
+	/* Set node 2 in waiting mode */
+	game_score = 0;
+	game_run = 0;
 
-	//game.id = 1;
-	//game.data_length = 2;
-	//game.data[0] = 1;
-	//game.data[1] = 2;
-	//while(can_send(&game, 0) == 0);
 	
 	while (1) 
     {
@@ -56,21 +53,19 @@ int main(void)
 		}
 		
 		/* Check game clock and if there is any games ongoing */
-		if(game_clock >= 3000 && game_ended == 0){ //game time = 30 sek
-			game_ended = 1;
+		if(game_clock >= 1000 && game_run == 1){ //game time = 30 sek
+			game_run = 0;
+			//for(uint8_t i  = 0; i < 10; i++){
+				
 			/* Send CAN message */
 			game.id = 1;
 			game.data_length = 2;
 			game.data[0] = game_score;
-			game.data[1] = game_ended;
+			game.data[1] = game_run;			
 			while(can_send(&game, 0) == 0);
-			//printf("score = %d\n", game_score);
-			//printf("Game clock = %d\n", game_clock);
-			//printf("Game ended = %d\n", game_ended);
+			set_servo_pos(160);
+			update_pos_ref(160);
 		}
-	//printf("Game clock = %d\n", game_clock);
-
-
     }
 }
 
