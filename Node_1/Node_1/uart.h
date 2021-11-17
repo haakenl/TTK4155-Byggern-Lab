@@ -13,8 +13,7 @@
 
 void uart_transmit_char(unsigned char data);
 unsigned char uart_receive_char(void);
-//int uart_transmit_char(char data, FILE* file);
-//int uart_receive_char(FILE* file);
+
 
 void uart_init();
 

@@ -156,9 +156,7 @@ void gui_print_arrow(int page){
 int gui_menu_down(int current_page){
 	current_menu = current_menu->children[current_page];
 	current_page = 0;
-	oled_pos(0,0);													// kan fjernes test på lab
 	gui_print_menu(current_menu);
-	oled_pos(0,0);													// kan fjernes test på lab
 	gui_print_arrow(current_page);
 	return current_page;
 }
@@ -167,33 +165,28 @@ int gui_menu_down(int current_page){
 int gui_menu_up(int current_page){
 	current_menu = current_menu->parent;
 	current_page = 0;
-	oled_pos(0,0);												// kan fjernes test på lab
 	gui_print_menu(current_menu);
-	oled_pos(0,0);												// kan fjernes test på lab
 	gui_print_arrow(current_page);
 	return current_page;
 }
 
 /* Depending on the current menu one specific tasks will run until stopped by user */
-void gui_menu_action(int current_page){						// current_page brukes i denne funksjoene kan gjøres om til void test på lab
+void gui_menu_action(int current_page){			
 	adc_direction current_direction;
 	uint8_t  current_child;
 	current_child = current_menu->name;
 	
 	/* New game */
-	//if(current_child == 29){ 
-	//	game_play(0);
-	//}
-	if(current_child == 44){
+	if(current_child == 44){ //User 1
 		game_play(0);
 	}
-	if(current_child == 45){
+	if(current_child == 45){ //User 2
 		game_play(1);
 	}
-	if(current_child == 46){
+	if(current_child == 46){ //User 3
 		game_play(2);
 	}
-	if(current_child == 47){
+	if(current_child == 47){ //User 4
 		game_play(3);
 	}
 	
@@ -282,14 +275,10 @@ void gui_menu_action(int current_page){						// current_page brukes i denne funk
 	else if(current_child == 35){
 		oled_pos(0, 30); 
 		gui_print_string(8); //Print "0     Value     255"
-		oled_pos(1, 1);
-		gui_print_string(9); //Print "Ch 0"
-		oled_pos(2, 1);
-		gui_print_string(10); //Print "Ch 1"
-		oled_pos(3, 1);
-		gui_print_string(11); //Print "CH 2"
-		oled_pos(4, 1);
-		gui_print_string(12); //Print "CH 3"
+		for(uint8_t i = 0; i < 4; i++){
+			oled_pos(i+1,1);
+			gui_print_string(i+9); //Print "Ch ?"
+		}
 		oled_pos(6, 25);
 		gui_print_string(13); //Print "Joy    Left    Right"
 		oled_pos(7, 0);
@@ -388,8 +377,7 @@ void gui_menu_action(int current_page){						// current_page brukes i denne funk
 		while(current_direction != LEFT){
 			current_direction = debounce_joystick_direction();
 			if(test_bit(UCSR0A, RXC0)){
-				//FILE* test = 0;
-				uart_transmit_char(UDR0);//,test);
+				uart_transmit_char(UDR0);
 			}
 		}
 	_delay_ms(200);
@@ -475,7 +463,7 @@ void game_play(uint8_t user){
 	_delay_ms(1000);
 	
 	/*Clear any mail box interrupt flags */
-	if(test_bit(can_int_flag_reg, can_int_flag_bit) == 0){
+	while(test_bit(can_int_flag_reg, can_int_flag_bit) == 0){
 		can_mailbox();
 		if(can_mailbox_0_recive_flag == 1){
 			can_message_receive(0);
@@ -484,7 +472,8 @@ void game_play(uint8_t user){
 		if(can_mailbox_1_recive_flag == 1){
 			can_message_receive(1);
 		}
-	}
+	}	
+
 	
 	uint8_t game_score = 0;
 	uint8_t game_run = 1;
@@ -497,7 +486,6 @@ void game_play(uint8_t user){
 	game_to_node2.data[2] = game_run;		// run game
 	can_message_send(&game_to_node2);
 	
-	
 	/* Print time to OLED */
 	uint8_t game_clock_sek = 0;
 	uint8_t game_clock_hundreds = 0;
@@ -507,12 +495,12 @@ void game_play(uint8_t user){
 	sprintf(time_print, buffer, game_clock_sek, game_clock_hundreds );
 	oled_pos(3, 20);
 	oled_printf(time_print);
-	
+		
 	/* Repeat until game has ended */
 	while(game_run == 1){
 		/* Update and print time to OLED */
 		game_clock_hundreds = game_clock_hundreds + 1;
-		if(game_clock_hundreds == 96){
+		if(game_clock_hundreds == 94){ // The code uses normally a fraction more that 10ms to complete.
 			game_clock_hundreds = 0;
 			game_clock_sek = game_clock_sek + 1;
 			char time_print[20];
@@ -549,7 +537,6 @@ void game_play(uint8_t user){
 		
 		if(test_bit(can_int_flag_reg, can_int_flag_bit) == 0){
 			can_mailbox();
-			
 			if(can_mailbox_0_recive_flag == 1){
 				game_from_node2 = can_message_receive(0);
 				if (game_from_node2.id  == 1){

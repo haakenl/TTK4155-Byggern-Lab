@@ -42,6 +42,13 @@ int main(void)
 	/* Set node 2 in waiting mode */
 	game_score = 0;
 	game_run = 0;
+	
+	/* Send initial CAN message with game play */
+	game.id = 1;
+	game.data_length = 2;
+	game.data[0] = game_score;
+	game.data[1] = game_run;
+	while(can_send(&game, 0) == 0);
 
 	
 	while (1) 

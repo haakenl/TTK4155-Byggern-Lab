@@ -29,21 +29,8 @@ void uart_init(){
 	// Enable Transmitter and Receiver
 	UCSR0B = (1<<TXEN0)|(1<<RXEN0);
 	
-	fdevopen(uart_transmit_char, uart_receive_char);
+	//fdevopen(uart_transmit_char, uart_receive_char);
 }
-
-/* Transmits 8-bit of data over USART */
-//int uart_transmit_char(char data, FILE* file){
-	//loop_until_bit_is_set(UCSR0A, UDRE0);
-	//UDR0 = data;
-	//return 0;
-//}
-//
-///* Receives 8-bit of data over USART */
-//int uart_receive_char(FILE* file){
-	//loop_until_bit_is_set(UCSR0A, RXC0);
-	//return UDR0;
-//}
 
 
 // OLD

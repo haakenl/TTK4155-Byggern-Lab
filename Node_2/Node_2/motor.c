@@ -24,9 +24,8 @@ void motor_init(void){
 	set_motor_speed(0);	
 	pid.pos_ref = encoder_range/2;
 	pid.kp = 0.35;
-	pid.ki = pid.kp/40; 
-			
-	}
+	pid.ki = pid.kp/40; 			
+}
 	
 /* Read encoder */	
 int16_t read_encoder(void){
@@ -91,6 +90,7 @@ void pid_regulator(void){
 		pid.pos_ref = encoder_range; 
 	}
 	
+	
 	pid.error = pid.pos_ref - pid.pos;
 	
 	if(abs(pid.error) < 500){
@@ -99,7 +99,7 @@ void pid_regulator(void){
 	else{
 		pid.error_i = pid.error_i + pid.error;
 	}
-	
+		
 	pid.output = pid.error*pid.kp + pid.error_i*pid.ki;
 	
 	set_motor_speed((int16_t)pid.output);
