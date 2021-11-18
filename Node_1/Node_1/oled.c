@@ -62,8 +62,9 @@ void oled_printf(char str[]){
 }
 
 /* Set OLED position */
+// See table 8-1: command table in OLED controller datasheet (p.27). 
 void oled_pos(uint8_t page, uint8_t seg){
-	//Go to page
+	//Go to page  
 	oled_write_command(page | (0xb0));
 	// Go to segment
 	oled_write_command(seg & 0x0f);
