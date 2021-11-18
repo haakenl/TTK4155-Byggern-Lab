@@ -71,7 +71,7 @@ void update_pos_ref(int16_t ref_pos){
 	pid.pos_ref = (encoder_range/2)-(ref_pos-115)*100;
 }
 
-/* Updates PID regulator this function needs to be run every 10mS */
+/* Updates PI regulator this function needs to be run every 10mS */
 void pid_regulator(void){
 	pid.pos = read_encoder();
 		

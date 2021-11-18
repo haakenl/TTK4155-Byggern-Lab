@@ -34,14 +34,14 @@ void timer_init(void){
 	
 	
 	NVIC_EnableIRQ(TC0_IRQn);		// Enable timer counter interrupt
-	REG_TC0_CCR0 |= TC_CCR_CLKEN| TC_CCR_SWTRG;	// Enable Timer 0
+	REG_TC0_CCR0 |= TC_CCR_CLKEN| TC_CCR_SWTRG;		// Enable Timer 0
 	REG_TC0_RC0 = 26250;				// counts = 10ms/(32/MCK)
 	game_clock = 0;
 }
 
 /* TC0 interrupt handler */
 void TC0_Handler(void){
-	uint32_t clear_TCO_flag = REG_TC0_SR0;//SR0_flag = REG_TC0_SR0;  // Interrupt flag is cleared by reading  
+	uint32_t clear_TCO_flag = REG_TC0_SR0;	  // Interrupt flag is cleared by reading the register 
 	game_clock = game_clock + 1;
 	pid_regulator();
 }

@@ -10,6 +10,7 @@
 
 #include <avr/io.h>
 #include <stdio.h>
+#include <avr/sfr_defs.h>
 #include "uart.h"
 
 
@@ -21,7 +22,6 @@ void uart_init(){
 	UBRR0H = (unsigned char) (ubrr>>8);
 	UBRR0L = (unsigned char) ubrr;
 	
-	//stop bit, set frame format 8bit packages
 	// USBS0 : Stop bit register
 	// UCSZ00 set 8 bit format
 	UCSR0C = (1<<URSEL0)|(1 << USBS0)|(3 << UCSZ00);
@@ -29,6 +29,7 @@ void uart_init(){
 	// Enable Transmitter and Receiver
 	UCSR0B = (1<<TXEN0)|(1<<RXEN0);
 	
+	// Uncomment if printf is required 
 	//fdevopen(uart_transmit_char, uart_receive_char);
 }
 
