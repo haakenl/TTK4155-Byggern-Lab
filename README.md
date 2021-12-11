@@ -20,4 +20,6 @@ Node 2 (ATSAM3X8E) firmware contains:
 
 Demo https://youtu.be/SB7sIn5-m7U
 
+[![Watch the video](https://i.imgur.com/vKb2F1B.png)](https://youtu.be/SB7sIn5-m7U)
+
 please feel free to use and learn from our mistakes in this project.
