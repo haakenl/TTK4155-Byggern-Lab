@@ -18,5 +18,6 @@ Node 2 (ATSAM3X8E) firmware contains:
 - Timers.
 - PI-controlled motor driver.
 
+Demo https://youtu.be/SB7sIn5-m7U
 
 please feel free to use and learn from our mistakes in this project.
